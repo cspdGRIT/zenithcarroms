@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎯 Ultimate Carrom Manager - Complete Edition</title>
+    <title>🎯 Ultimate Carrom Manager - Ultra Dynamic Edition</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap');
 
@@ -261,15 +261,48 @@
             color: white;
         }
 
-        .btn-add-board {
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-            color: #654321;
-            font-size: 1.3em;
+        .btn-warning {
+            background: linear-gradient(135deg, #FFA500, #FF8C00);
+            color: white;
+        }
+
+        .btn-circle {
             width: 50px;
             height: 50px;
             padding: 0;
             border-radius: 50%;
             justify-content: center;
+            font-size: 1.5em;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.9em;
+        }
+
+        .board-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #FFF8DC, #FFE4B5);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 3px solid #FFD700;
+        }
+
+        .board-controls-label {
+            font-weight: 800;
+            color: #654321;
+            font-size: 1.1em;
+        }
+
+        .board-count {
+            font-size: 2em;
+            font-weight: 900;
+            color: #654321;
+            min-width: 60px;
+            text-align: center;
         }
 
         .table-wrapper {
@@ -349,18 +382,6 @@
             font-style: italic;
         }
 
-        .editable-cell input {
-            width: 100%;
-            padding: 8px;
-            border: 3px solid #FFD700;
-            border-radius: 8px;
-            font-size: 15px;
-            font-family: 'Poppins', sans-serif;
-            text-align: center;
-            font-weight: 700;
-            background: linear-gradient(135deg, #FFFACD, white);
-        }
-
         .break-checkbox {
             width: 25px;
             height: 25px;
@@ -404,7 +425,6 @@
             -webkit-text-fill-color: transparent;
             padding: 10px;
             border-radius: 8px;
-            box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.3);
         }
 
         .serial-col {
@@ -412,6 +432,82 @@
             font-weight: 900;
             color: #654321;
             font-size: 1.1em;
+        }
+
+        .action-col {
+            background: linear-gradient(135deg, rgba(220, 20, 60, 0.05), rgba(255, 99, 71, 0.05)) !important;
+        }
+
+        .row-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .row-btn {
+            padding: 6px 12px;
+            font-size: 0.85em;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .row-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .row-btn-delete {
+            background: linear-gradient(135deg, #DC143C, #FF6347);
+            color: white;
+        }
+
+        .row-btn-up {
+            background: linear-gradient(135deg, #1E90FF, #4169E1);
+            color: white;
+        }
+
+        .row-btn-down {
+            background: linear-gradient(135deg, #9370DB, #8A2BE2);
+            color: white;
+        }
+
+        .row-btn-duplicate {
+            background: linear-gradient(135deg, #228B22, #32CD32);
+            color: white;
+        }
+
+        .stats-panel {
+            background: linear-gradient(135deg, #FFF8DC, #FFE4B5);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 3px solid #FFD700;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 900;
+            color: #654321;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
         }
 
         .user-info-panel {
@@ -456,42 +552,6 @@
             color: #FFD700;
         }
 
-        .log-entry {
-            background: white;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-radius: 12px;
-            border-left: 5px solid #8B4513;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s;
-        }
-
-        .log-entry:hover {
-            transform: translateX(5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .log-timestamp {
-            font-size: 0.9em;
-            color: #666;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .log-user {
-            font-weight: 800;
-            color: #654321;
-            margin-bottom: 8px;
-            font-size: 1.05em;
-        }
-
-        .log-change {
-            font-size: 0.95em;
-            color: #444;
-            line-height: 1.6;
-        }
-
-        /* Tournament Cards */
         .tournament-card {
             background: white;
             border-radius: 15px;
@@ -539,6 +599,41 @@
             gap: 10px;
             margin-top: 15px;
             flex-wrap: wrap;
+        }
+
+        .log-entry {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            border-left: 5px solid #8B4513;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .log-entry:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .log-timestamp {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .log-user {
+            font-weight: 800;
+            color: #654321;
+            margin-bottom: 8px;
+            font-size: 1.05em;
+        }
+
+        .log-change {
+            font-size: 0.95em;
+            color: #444;
+            line-height: 1.6;
         }
 
         .toast {
@@ -683,8 +778,12 @@
                 flex-direction: column;
             }
 
-            .btn {
+            .btn:not(.btn-circle) {
                 width: 100%;
+                justify-content: center;
+            }
+
+            .board-controls {
                 justify-content: center;
             }
         }
@@ -694,7 +793,7 @@
     <div class="container">
         <div class="header">
             <h1>🎯 ULTIMATE CARROM MANAGER</h1>
-            <p>Professional Tournament Management with Complete Save/Load System</p>
+            <p>Professional Tournament Management - Ultra Dynamic Edition</p>
         </div>
 
         <div class="main-layout">
@@ -747,11 +846,15 @@
                         </div>
                     </div>
 
+                    <div class="stats-panel" id="dashboardStats">
+                        <!-- Stats populated by JS -->
+                    </div>
+
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
                         <div style="background: linear-gradient(135deg, #FFD700, #FFA500); padding: 30px; border-radius: 15px; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s;" onclick="showSection('pointsTable')" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
                             <h3 style="font-size: 2.5em; margin-bottom: 10px;">📊</h3>
                             <h4 style="color: #654321; font-size: 1.3em; margin-bottom: 10px;">Points Table</h4>
-                            <p style="color: #654321; opacity: 0.9;">Dynamic board addition • Editable cells • Queen tracking</p>
+                            <p style="color: #654321; opacity: 0.9;">Dynamic boards • Add/Remove matches • Smart actions</p>
                         </div>
 
                         <div style="background: linear-gradient(135deg, #228B22, #32CD32); padding: 30px; border-radius: 15px; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s; color: white;" onclick="showSection('savedTournaments')" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
@@ -763,7 +866,7 @@
                         <div style="background: linear-gradient(135deg, #654321, #8B4513); padding: 30px; border-radius: 15px; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s; color: white;" onclick="showSection('editLog')" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
                             <h3 style="font-size: 2.5em; margin-bottom: 10px;">📝</h3>
                             <h4 style="color: #FFD700; font-size: 1.3em; margin-bottom: 10px;">Edit Log</h4>
-                            <p style="opacity: 0.9;">Complete audit trail • IP & Mobile tracking</p>
+                            <p style="opacity: 0.9;">Complete audit trail • Full history</p>
                         </div>
                     </div>
                 </div>
@@ -772,7 +875,7 @@
                 <div id="pointsTable" class="content-section">
                     <div class="section-header">
                         <h2>📊 Points Table</h2>
-                        <p>Click cells to edit • Add boards dynamically • All changes logged</p>
+                        <p>Ultra dynamic with smart controls</p>
                     </div>
 
                     <div style="background: linear-gradient(135deg, #FFF8DC, #FFE4B5); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 3px solid #FFD700;">
@@ -782,9 +885,25 @@
                         </div>
                     </div>
 
+                    <!-- Board Controls -->
+                    <div class="board-controls">
+                        <span class="board-controls-label">📊 Boards:</span>
+                        <button class="btn btn-danger btn-circle" onclick="removeBoardColumn()" title="Remove Board">
+                            ➖
+                        </button>
+                        <div class="board-count" id="boardCount">3</div>
+                        <button class="btn btn-success btn-circle" onclick="addBoardColumn()" title="Add Board">
+                            ➕
+                        </button>
+                    </div>
+
+                    <!-- Main Controls -->
                     <div class="table-controls">
                         <button class="btn btn-primary" onclick="addMatchRow()">
                             ➕ Add Match
+                        </button>
+                        <button class="btn btn-warning" onclick="removeLastMatch()">
+                            ➖ Remove Last Match
                         </button>
                         <button class="btn btn-success" onclick="saveTournament()">
                             💾 Save Tournament
@@ -795,11 +914,32 @@
                         <button class="btn btn-danger" onclick="clearTable()">
                             🗑️ Clear All
                         </button>
-                        <button class="btn btn-add-board" onclick="addBoardColumn()" title="Add Board Column">
-                            ➕
-                        </button>
                         <div class="form-group" style="margin: 0; max-width: 250px;">
                             <input type="date" id="tableDate" onchange="updateTableDate()">
+                        </div>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="stats-panel">
+                        <div class="stat-item">
+                            <div class="stat-value" id="statMatches">0</div>
+                            <div class="stat-label">Matches</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="statBoards">3</div>
+                            <div class="stat-label">Boards</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="statPlayers">0</div>
+                            <div class="stat-label">Players</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="statQueens">0</div>
+                            <div class="stat-label">Queens</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="statTotalScore">0</div>
+                            <div class="stat-label">Total Score</div>
                         </div>
                     </div>
 
@@ -946,6 +1086,8 @@
             renderPointsTable();
             renderEditLog();
             renderTournamentsList();
+            updateStats();
+            updateDashboardStats();
             document.getElementById('tableDate').value = new Date().toISOString().split('T')[0];
         };
 
@@ -975,7 +1117,6 @@
                 document.getElementById('settingsMobile').value = mobile;
             }
 
-            // Update current tournament name
             const tournamentName = document.getElementById('tournamentNameInput').value;
             document.getElementById('currentTournamentName').textContent = tournamentName || 'None';
         }
@@ -990,6 +1131,8 @@
 
             if (section === 'savedTournaments') {
                 renderTournamentsList();
+            } else if (section === 'dashboard') {
+                updateDashboardStats();
             }
         }
 
@@ -1009,6 +1152,38 @@
             showToast('Mobile number saved!', '✅');
         }
 
+        // Update Dashboard Stats
+        function updateDashboardStats() {
+            const container = document.getElementById('dashboardStats');
+            const totalTournaments = savedTournaments.length;
+            const totalMatches = pointsTableData.length;
+            const totalQueens = countTotalQueens();
+            const totalScore = calculateTotalScore();
+
+            container.innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-value">${totalTournaments}</div>
+                    <div class="stat-label">Saved Tournaments</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${totalMatches}</div>
+                    <div class="stat-label">Current Matches</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${numBoards}</div>
+                    <div class="stat-label">Boards</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${totalQueens}</div>
+                    <div class="stat-label">Queens Pocketed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${totalScore}</div>
+                    <div class="stat-label">Total Score</div>
+                </div>
+            `;
+        }
+
         // Render Table Header
         function renderTableHeader() {
             const thead = document.getElementById('tableHeader');
@@ -1023,6 +1198,7 @@
             }
             
             headerHTML += '<th rowspan="2">Total Score</th>';
+            headerHTML += '<th rowspan="2">Actions</th>';
             headerHTML += '</tr><tr>';
             
             for (let i = 1; i <= numBoards; i++) {
@@ -1043,11 +1219,42 @@
                 row[`board${numBoards}_pts`] = 0;
             });
             
+            document.getElementById('boardCount').textContent = numBoards;
+            
             logEdit('Points Table', `Added Board ${numBoards}`, null, `Board ${numBoards} column added`);
             saveCurrentState();
             renderTableHeader();
             renderPointsTable();
+            updateStats();
             showToast(`Board ${numBoards} added!`, '✅');
+        }
+
+        // Remove Board Column
+        function removeBoardColumn() {
+            if (numBoards <= 1) {
+                showToast('Cannot remove! Minimum 1 board required.', '❌');
+                return;
+            }
+
+            if (!confirm(`Remove Board ${numBoards}? All data in this column will be lost!`)) {
+                return;
+            }
+
+            pointsTableData.forEach(row => {
+                delete row[`board${numBoards}_q`];
+                delete row[`board${numBoards}_pts`];
+                calculateRowTotal(row);
+            });
+
+            logEdit('Points Table', `Removed Board ${numBoards}`, `Board ${numBoards}`, 'Deleted');
+            numBoards--;
+            document.getElementById('boardCount').textContent = numBoards;
+            
+            saveCurrentState();
+            renderTableHeader();
+            renderPointsTable();
+            updateStats();
+            showToast(`Board removed!`, '✅');
         }
 
         // Add Match Row
@@ -1070,7 +1277,101 @@
             logEdit('Points Table', 'Added new match', null, `Row ${row.serial}`);
             saveCurrentState();
             renderPointsTable();
+            updateStats();
             showToast('Match added!', '✅');
+        }
+
+        // Remove Last Match
+        function removeLastMatch() {
+            if (pointsTableData.length === 0) {
+                showToast('No matches to remove!', '❌');
+                return;
+            }
+
+            if (!confirm('Remove the last match?')) {
+                return;
+            }
+
+            const lastRow = pointsTableData[pointsTableData.length - 1];
+            logEdit('Points Table', `Removed last match`, `Row ${lastRow.serial}`, 'Deleted');
+            
+            pointsTableData.pop();
+            
+            saveCurrentState();
+            renderPointsTable();
+            updateStats();
+            showToast('Last match removed!', '✅');
+        }
+
+        // Delete Row
+        function deleteRow(index) {
+            if (!confirm('Delete this match?')) return;
+
+            const row = pointsTableData[index];
+            logEdit('Points Table', `Deleted match`, `Row ${row.serial} - ${row.player}`, 'Deleted');
+            
+            pointsTableData.splice(index, 1);
+            
+            // Renumber serials
+            pointsTableData.forEach((r, i) => r.serial = i + 1);
+            
+            saveCurrentState();
+            renderPointsTable();
+            updateStats();
+            showToast('Match deleted!', '✅');
+        }
+
+        // Move Row Up
+        function moveRowUp(index) {
+            if (index === 0) {
+                showToast('Already at top!', '❌');
+                return;
+            }
+
+            [pointsTableData[index], pointsTableData[index - 1]] = [pointsTableData[index - 1], pointsTableData[index]];
+            
+            // Renumber serials
+            pointsTableData.forEach((r, i) => r.serial = i + 1);
+            
+            logEdit('Points Table', `Moved match up`, `Row ${index + 1}`, `Row ${index}`);
+            saveCurrentState();
+            renderPointsTable();
+            showToast('Match moved up!', '✅');
+        }
+
+        // Move Row Down
+        function moveRowDown(index) {
+            if (index === pointsTableData.length - 1) {
+                showToast('Already at bottom!', '❌');
+                return;
+            }
+
+            [pointsTableData[index], pointsTableData[index + 1]] = [pointsTableData[index + 1], pointsTableData[index]];
+            
+            // Renumber serials
+            pointsTableData.forEach((r, i) => r.serial = i + 1);
+            
+            logEdit('Points Table', `Moved match down`, `Row ${index + 1}`, `Row ${index + 2}`);
+            saveCurrentState();
+            renderPointsTable();
+            showToast('Match moved down!', '✅');
+        }
+
+        // Duplicate Row
+        function duplicateRow(index) {
+            const original = pointsTableData[index];
+            const duplicate = JSON.parse(JSON.stringify(original)); // Deep copy
+            duplicate.id = Date.now();
+            duplicate.serial = pointsTableData.length + 1;
+            duplicate.player = original.player + ' (Copy)';
+
+            pointsTableData.push(duplicate);
+            
+            logEdit('Points Table', `Duplicated match`, `Row ${original.serial}`, `Row ${duplicate.serial}`);
+            saveCurrentState();
+            renderPointsTable();
+            updateStats();
+            showToast('Match duplicated!', '✅');
         }
 
         // Render Points Table
@@ -1120,6 +1421,17 @@
                     </td>
                 `;
 
+                tr.innerHTML += `
+                    <td class="action-col">
+                        <div class="row-actions">
+                            <button class="row-btn row-btn-up" onclick="moveRowUp(${index})" title="Move Up">⬆️</button>
+                            <button class="row-btn row-btn-down" onclick="moveRowDown(${index})" title="Move Down">⬇️</button>
+                            <button class="row-btn row-btn-duplicate" onclick="duplicateRow(${index})" title="Duplicate">📋</button>
+                            <button class="row-btn row-btn-delete" onclick="deleteRow(${index})" title="Delete">🗑️</button>
+                        </div>
+                    </td>
+                `;
+
                 tbody.appendChild(tr);
             });
         }
@@ -1149,6 +1461,7 @@
                 logEdit('Points Table', `Row ${row.serial} - ${field}`, oldValue, newValue);
                 saveCurrentState();
                 renderPointsTable();
+                updateStats();
             }
         }
 
@@ -1162,6 +1475,7 @@
             logEdit('Points Table', `Row ${row.serial} - ${field}`, oldValue ? '👑' : '☐', row[field] ? '👑' : '☐');
             saveCurrentState();
             renderPointsTable();
+            updateStats();
         }
 
         // Calculate Row Total
@@ -1173,6 +1487,53 @@
             }
             
             row.totalScore = total;
+        }
+
+        // Update Stats
+        function updateStats() {
+            const totalMatches = pointsTableData.length;
+            const totalPlayers = pointsTableData.filter(r => r.player).length;
+            const totalQueens = countTotalQueens();
+            const totalScore = calculateTotalScore();
+
+            document.getElementById('statMatches').textContent = totalMatches;
+            document.getElementById('statBoards').textContent = numBoards;
+            document.getElementById('statPlayers').textContent = totalPlayers;
+            document.getElementById('statQueens').textContent = totalQueens;
+            document.getElementById('statTotalScore').textContent = totalScore;
+        }
+
+        function countTotalQueens() {
+            let count = 0;
+            pointsTableData.forEach(row => {
+                for (let i = 1; i <= numBoards; i++) {
+                    if (row[`board${i}_q`]) count++;
+                }
+            });
+            return count;
+        }
+
+        function calculateTotalScore() {
+            return pointsTableData.reduce((sum, row) => sum + row.totalScore, 0);
+        }
+
+        // Clear Table
+        function clearTable() {
+            if (!confirm('Clear entire table? This will not delete the saved tournament.')) return;
+
+            logEdit('Points Table', 'Cleared table', `${pointsTableData.length} rows`, 'Empty');
+            pointsTableData = [];
+            saveCurrentState();
+            renderPointsTable();
+            updateStats();
+            showToast('Table cleared!', '✅');
+        }
+
+        // Update Table Date
+        function updateTableDate() {
+            const date = document.getElementById('tableDate').value;
+            logEdit('Settings', 'Table date updated', null, date);
+            saveCurrentState();
         }
 
         // Save Tournament
@@ -1200,7 +1561,6 @@
                 modifiedAt: new Date().toISOString()
             };
 
-            // Find and update or add new
             const existingIndex = savedTournaments.findIndex(t => t.id === tournament.id);
             if (existingIndex !== -1) {
                 savedTournaments[existingIndex] = tournament;
@@ -1214,6 +1574,7 @@
             logEdit('Tournament', 'Saved tournament', null, tournamentName);
             showToast('Tournament saved successfully!', '💾');
             updateSessionDisplay();
+            updateDashboardStats();
         }
 
         // Open Save As Modal
@@ -1241,7 +1602,7 @@
                 name: newName,
                 date: document.getElementById('tableDate').value,
                 numBoards: numBoards,
-                data: JSON.parse(JSON.stringify(pointsTableData)), // Deep copy
+                data: JSON.parse(JSON.stringify(pointsTableData)),
                 savedAt: new Date().toISOString(),
                 modifiedAt: new Date().toISOString()
             };
@@ -1256,6 +1617,7 @@
             logEdit('Tournament', 'Saved as new tournament', null, newName);
             showToast('Tournament saved as new!', '💾');
             updateSessionDisplay();
+            updateDashboardStats();
         }
 
         // Load Tournament
@@ -1271,17 +1633,18 @@
                 return;
             }
 
-            // Load tournament data
-            pointsTableData = JSON.parse(JSON.stringify(tournament.data)); // Deep copy
+            pointsTableData = JSON.parse(JSON.stringify(tournament.data));
             numBoards = tournament.numBoards;
             currentTournamentId = tournament.id;
 
             document.getElementById('tournamentNameInput').value = tournament.name;
             document.getElementById('tableDate').value = tournament.date;
+            document.getElementById('boardCount').textContent = numBoards;
 
             saveCurrentState();
             renderTableHeader();
             renderPointsTable();
+            updateStats();
             
             logEdit('Tournament', 'Loaded tournament', null, tournament.name);
             showToast('Tournament loaded successfully!', '✅');
@@ -1309,6 +1672,7 @@
             renderTournamentsList();
             logEdit('Tournament', 'Deleted tournament', tournament.name, 'Deleted');
             showToast('Tournament deleted!', '✅');
+            updateDashboardStats();
         }
 
         // Export Tournament
@@ -1348,12 +1712,10 @@
                 try {
                     const tournament = JSON.parse(e.target.result);
                     
-                    // Validate tournament structure
                     if (!tournament.name || !tournament.data || !Array.isArray(tournament.data)) {
                         throw new Error('Invalid tournament file format');
                     }
 
-                    // Generate new ID to avoid conflicts
                     tournament.id = Date.now();
                     tournament.savedAt = new Date().toISOString();
 
@@ -1365,6 +1727,7 @@
                     
                     logEdit('Tournament', 'Imported tournament', null, tournament.name);
                     showToast('Tournament imported successfully!', '📤');
+                    updateDashboardStats();
                     
                 } catch (error) {
                     showToast('Invalid JSON file! ' + error.message, '❌');
@@ -1437,31 +1800,15 @@
         function clearAllTournaments() {
             if (!confirm('Delete ALL saved tournaments? This cannot be undone!')) return;
 
+            const count = savedTournaments.length;
             savedTournaments = [];
             currentTournamentId = null;
             saveTournamentsToStorage();
             renderTournamentsList();
             
-            logEdit('Tournament', 'Deleted all tournaments', `${savedTournaments.length} tournaments`, 'Empty');
+            logEdit('Tournament', 'Deleted all tournaments', `${count} tournaments`, 'Empty');
             showToast('All tournaments deleted!', '✅');
-        }
-
-        // Clear Table
-        function clearTable() {
-            if (!confirm('Clear entire table? This will not delete the saved tournament.')) return;
-
-            logEdit('Points Table', 'Cleared table', `${pointsTableData.length} rows`, 'Empty');
-            pointsTableData = [];
-            saveCurrentState();
-            renderPointsTable();
-            showToast('Table cleared!', '✅');
-        }
-
-        // Update Table Date
-        function updateTableDate() {
-            const date = document.getElementById('tableDate').value;
-            logEdit('Settings', 'Table date updated', null, date);
-            saveCurrentState();
+            updateDashboardStats();
         }
 
         // Log Edit
@@ -1583,7 +1930,6 @@
         }
 
         function loadAllData() {
-            // Load current table
             const savedTable = localStorage.getItem('carromCurrentTable');
             if (savedTable) pointsTableData = JSON.parse(savedTable);
 
@@ -1593,15 +1939,12 @@
             const savedCurrentId = localStorage.getItem('carromCurrentTournamentId');
             if (savedCurrentId) currentTournamentId = parseInt(savedCurrentId) || null;
 
-            // Load tournaments
             const savedTournamentsData = localStorage.getItem('carromSavedTournaments');
             if (savedTournamentsData) savedTournaments = JSON.parse(savedTournamentsData);
 
-            // Load edit log
             const savedLog = localStorage.getItem('carromEditLog');
             if (savedLog) editLog = JSON.parse(savedLog);
 
-            // Load user info
             const savedUserInfo = localStorage.getItem('carromUserInfo');
             if (savedUserInfo) {
                 const loadedInfo = JSON.parse(savedUserInfo);
