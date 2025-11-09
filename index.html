@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎯 Ultimate Carrom Manager</title>
+    <title>🎯 Ultimate Carrom Manager - Complete Edition</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap');
 
@@ -189,7 +189,6 @@
             font-weight: 900;
         }
 
-        /* AMAZING POINTS TABLE */
         .table-controls {
             display: flex;
             gap: 15px;
@@ -254,6 +253,11 @@
 
         .btn-danger {
             background: linear-gradient(135deg, #DC143C, #FF6347);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #1E90FF, #4169E1);
             color: white;
         }
 
@@ -410,7 +414,6 @@
             font-size: 1.1em;
         }
 
-        /* User Info Panel */
         .user-info-panel {
             background: linear-gradient(135deg, #654321, #8B4513, #A0522D);
             color: white;
@@ -453,7 +456,6 @@
             color: #FFD700;
         }
 
-        /* Edit Log */
         .log-entry {
             background: white;
             padding: 20px;
@@ -487,6 +489,56 @@
             font-size: 0.95em;
             color: #444;
             line-height: 1.6;
+        }
+
+        /* Tournament Cards */
+        .tournament-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+
+        .tournament-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+            border-color: #FFD700;
+        }
+
+        .tournament-card h3 {
+            color: #654321;
+            margin-bottom: 12px;
+            font-size: 1.5em;
+        }
+
+        .tournament-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin: 15px 0;
+            padding: 15px;
+            background: #FFF8DC;
+            border-radius: 10px;
+        }
+
+        .tournament-info-item {
+            font-size: 0.9em;
+        }
+
+        .tournament-info-item strong {
+            color: #654321;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .tournament-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
         }
 
         .toast {
@@ -525,7 +577,8 @@
         }
 
         .form-group input,
-        .form-group select {
+        .form-group select,
+        .form-group textarea {
             width: 100%;
             padding: 14px;
             border: 3px solid #D2691E;
@@ -536,10 +589,78 @@
         }
 
         .form-group input:focus,
-        .form-group select:focus {
+        .form-group select:focus,
+        .form-group textarea:focus {
             outline: none;
             border-color: #FFD700;
             box-shadow: 0 0 0 5px rgba(255, 215, 0, 0.2);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 25px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+            animation: modalSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 4px solid #D2691E;
+        }
+
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: scale(0.8) translateY(-50px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #FFD700;
+        }
+
+        .modal-header h3 {
+            font-size: 2em;
+            color: #654321;
+        }
+
+        .file-upload-area {
+            border: 3px dashed #D2691E;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            background: #FFF8DC;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload-area:hover {
+            border-color: #FFD700;
+            background: #FFFACD;
+            transform: scale(1.02);
+        }
+
+        .file-upload-area input[type="file"] {
+            display: none;
         }
 
         @media (max-width: 1200px) {
@@ -573,7 +694,7 @@
     <div class="container">
         <div class="header">
             <h1>🎯 ULTIMATE CARROM MANAGER</h1>
-            <p>Professional Tournament Management with Dynamic Scoring</p>
+            <p>Professional Tournament Management with Complete Save/Load System</p>
         </div>
 
         <div class="main-layout">
@@ -584,6 +705,9 @@
                 </div>
                 <div class="nav-item" onclick="showSection('pointsTable')">
                     <span class="icon">📊</span> Points Table
+                </div>
+                <div class="nav-item" onclick="showSection('savedTournaments')">
+                    <span class="icon">💾</span> Saved Tournaments
                 </div>
                 <div class="nav-item" onclick="showSection('editLog')">
                     <span class="icon">📝</span> Edit Log
@@ -616,6 +740,10 @@
                                 <label>⏰ Session Started:</label>
                                 <div class="value" id="sessionTime"></div>
                             </div>
+                            <div class="user-info-item">
+                                <label>💾 Current Tournament:</label>
+                                <div class="value" id="currentTournamentName">None</div>
+                            </div>
                         </div>
                     </div>
 
@@ -624,6 +752,12 @@
                             <h3 style="font-size: 2.5em; margin-bottom: 10px;">📊</h3>
                             <h4 style="color: #654321; font-size: 1.3em; margin-bottom: 10px;">Points Table</h4>
                             <p style="color: #654321; opacity: 0.9;">Dynamic board addition • Editable cells • Queen tracking</p>
+                        </div>
+
+                        <div style="background: linear-gradient(135deg, #228B22, #32CD32); padding: 30px; border-radius: 15px; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s; color: white;" onclick="showSection('savedTournaments')" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                            <h3 style="font-size: 2.5em; margin-bottom: 10px;">💾</h3>
+                            <h4 style="font-size: 1.3em; margin-bottom: 10px;">Saved Tournaments</h4>
+                            <p style="opacity: 0.9;">Save • Load • Export • Import</p>
                         </div>
 
                         <div style="background: linear-gradient(135deg, #654321, #8B4513); padding: 30px; border-radius: 15px; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s; color: white;" onclick="showSection('editLog')" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
@@ -641,12 +775,22 @@
                         <p>Click cells to edit • Add boards dynamically • All changes logged</p>
                     </div>
 
+                    <div style="background: linear-gradient(135deg, #FFF8DC, #FFE4B5); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 3px solid #FFD700;">
+                        <div class="form-group" style="margin: 0;">
+                            <label>🏆 Tournament Name:</label>
+                            <input type="text" id="tournamentNameInput" placeholder="Enter tournament name (e.g., District Championship 2024)">
+                        </div>
+                    </div>
+
                     <div class="table-controls">
                         <button class="btn btn-primary" onclick="addMatchRow()">
                             ➕ Add Match
                         </button>
-                        <button class="btn btn-success" onclick="saveTable()">
-                            💾 Save Table
+                        <button class="btn btn-success" onclick="saveTournament()">
+                            💾 Save Tournament
+                        </button>
+                        <button class="btn btn-info" onclick="openSaveAsModal()">
+                            💾 Save As...
                         </button>
                         <button class="btn btn-danger" onclick="clearTable()">
                             🗑️ Clear All
@@ -655,20 +799,35 @@
                             ➕
                         </button>
                         <div class="form-group" style="margin: 0; max-width: 250px;">
-                            <input type="date" id="tableDate" onchange="updateTableDate()" style="padding: 12px;">
+                            <input type="date" id="tableDate" onchange="updateTableDate()">
                         </div>
                     </div>
 
                     <div class="table-wrapper">
                         <table class="points-table" id="mainPointsTable">
-                            <thead id="tableHeader">
-                                <!-- Dynamic header -->
-                            </thead>
-                            <tbody id="pointsTableBody">
-                                <!-- Dynamic rows -->
-                            </tbody>
+                            <thead id="tableHeader"></thead>
+                            <tbody id="pointsTableBody"></tbody>
                         </table>
                     </div>
+                </div>
+
+                <!-- Saved Tournaments -->
+                <div id="savedTournaments" class="content-section">
+                    <div class="section-header">
+                        <h2>💾 Saved Tournaments</h2>
+                        <p>Manage all your saved tournaments</p>
+                    </div>
+
+                    <div class="table-controls">
+                        <button class="btn btn-primary" onclick="openImportModal()">
+                            📤 Import Tournament
+                        </button>
+                        <button class="btn btn-danger" onclick="clearAllTournaments()">
+                            🗑️ Delete All
+                        </button>
+                    </div>
+
+                    <div id="tournamentsList"></div>
                 </div>
 
                 <!-- Edit Log -->
@@ -728,11 +887,50 @@
         </div>
     </div>
 
+    <!-- Save As Modal -->
+    <div id="saveAsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>💾 Save Tournament As...</h3>
+            </div>
+            <div class="form-group">
+                <label>Tournament Name:</label>
+                <input type="text" id="saveAsName" placeholder="Enter tournament name">
+            </div>
+            <div style="display: flex; gap: 15px;">
+                <button class="btn btn-success" onclick="saveAs()">💾 Save</button>
+                <button class="btn btn-danger" onclick="closeModal('saveAsModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📤 Import Tournament</h3>
+            </div>
+            
+            <div class="file-upload-area" onclick="document.getElementById('fileInput').click()">
+                <div style="font-size: 4em; margin-bottom: 15px;">📁</div>
+                <h4 style="color: #654321; margin-bottom: 10px;">Click to Select JSON File</h4>
+                <p style="color: #666;">or drag and drop here</p>
+                <input type="file" id="fileInput" accept=".json" onchange="handleFileImport(event)">
+            </div>
+
+            <div style="margin-top: 25px;">
+                <button class="btn btn-danger" onclick="closeModal('importModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Global State
         let pointsTableData = [];
-        let numBoards = 3; // Default 3 boards, can be increased
+        let numBoards = 3;
         let editLog = [];
+        let savedTournaments = [];
+        let currentTournamentId = null;
         let userInfo = {
             ip: 'Unknown',
             mobile: 'Not Set',
@@ -741,12 +939,13 @@
 
         // Initialize
         window.onload = function() {
-            loadData();
+            loadAllData();
             getUserIP();
             updateSessionDisplay();
             renderTableHeader();
             renderPointsTable();
             renderEditLog();
+            renderTournamentsList();
             document.getElementById('tableDate').value = new Date().toISOString().split('T')[0];
         };
 
@@ -757,7 +956,7 @@
                 const data = await response.json();
                 userInfo.ip = data.ip;
                 document.getElementById('userIP').textContent = data.ip;
-                saveData();
+                saveUserInfo();
             } catch (error) {
                 userInfo.ip = 'Unable to fetch';
                 document.getElementById('userIP').textContent = 'Unable to fetch';
@@ -775,6 +974,10 @@
                 document.getElementById('userMobile').textContent = mobile;
                 document.getElementById('settingsMobile').value = mobile;
             }
+
+            // Update current tournament name
+            const tournamentName = document.getElementById('tournamentNameInput').value;
+            document.getElementById('currentTournamentName').textContent = tournamentName || 'None';
         }
 
         // Navigation
@@ -784,6 +987,10 @@
             
             document.getElementById(section).classList.add('active');
             event.target.closest('.nav-item').classList.add('active');
+
+            if (section === 'savedTournaments') {
+                renderTournamentsList();
+            }
         }
 
         // Save Mobile
@@ -807,21 +1014,17 @@
             const thead = document.getElementById('tableHeader');
             let headerHTML = '<tr>';
             
-            // Fixed columns
             headerHTML += '<th rowspan="2">S</th>';
             headerHTML += '<th rowspan="2">Break</th>';
             headerHTML += '<th rowspan="2">Player</th>';
             
-            // Dynamic board columns
             for (let i = 1; i <= numBoards; i++) {
                 headerHTML += `<th colspan="2" class="board-header">Board ${i}</th>`;
             }
             
-            // Total Score
             headerHTML += '<th rowspan="2">Total Score</th>';
             headerHTML += '</tr><tr>';
             
-            // Sub-headers for each board
             for (let i = 1; i <= numBoards; i++) {
                 headerHTML += '<th class="sub-header">Queen</th>';
                 headerHTML += '<th class="sub-header">Pts</th>';
@@ -835,14 +1038,13 @@
         function addBoardColumn() {
             numBoards++;
             
-            // Update all existing rows
             pointsTableData.forEach(row => {
                 row[`board${numBoards}_q`] = false;
                 row[`board${numBoards}_pts`] = 0;
             });
             
             logEdit('Points Table', `Added Board ${numBoards}`, null, `Board ${numBoards} column added`);
-            saveData();
+            saveCurrentState();
             renderTableHeader();
             renderPointsTable();
             showToast(`Board ${numBoards} added!`, '✅');
@@ -857,7 +1059,6 @@
                 player: ''
             };
 
-            // Add board data
             for (let i = 1; i <= numBoards; i++) {
                 row[`board${i}_q`] = false;
                 row[`board${i}_pts`] = 0;
@@ -867,7 +1068,7 @@
 
             pointsTableData.push(row);
             logEdit('Points Table', 'Added new match', null, `Row ${row.serial}`);
-            saveData();
+            saveCurrentState();
             renderPointsTable();
             showToast('Match added!', '✅');
         }
@@ -880,10 +1081,8 @@
             pointsTableData.forEach((row, index) => {
                 const tr = document.createElement('tr');
                 
-                // Serial
                 tr.innerHTML = `<td class="serial-col">${row.serial}</td>`;
                 
-                // Break checkbox
                 tr.innerHTML += `
                     <td>
                         <input type="checkbox" class="break-checkbox" 
@@ -892,7 +1091,6 @@
                     </td>
                 `;
                 
-                // Player name
                 tr.innerHTML += `
                     <td class="editable-cell ${!row.player ? 'empty' : ''}" 
                         onclick="editCell(${index}, 'player')">
@@ -900,9 +1098,7 @@
                     </td>
                 `;
                 
-                // Dynamic board columns
                 for (let i = 1; i <= numBoards; i++) {
-                    // Queen
                     tr.innerHTML += `
                         <td onclick="toggleQueen(${index}, 'board${i}_q')">
                             <span class="queen-box ${row[`board${i}_q`] ? 'checked' : ''}">
@@ -911,7 +1107,6 @@
                         </td>
                     `;
                     
-                    // Points
                     tr.innerHTML += `
                         <td class="editable-cell" onclick="editCell(${index}, 'board${i}_pts')">
                             ${row[`board${i}_pts`]}
@@ -919,7 +1114,6 @@
                     `;
                 }
                 
-                // Total Score
                 tr.innerHTML += `
                     <td>
                         <div class="total-score">${row.totalScore}</div>
@@ -937,7 +1131,7 @@
             row.break = !row.break;
             
             logEdit('Points Table', `Row ${row.serial} - Break`, oldValue ? '✓' : '☐', row.break ? '✓' : '☐');
-            saveData();
+            saveCurrentState();
         }
 
         // Edit Cell
@@ -953,7 +1147,7 @@
                 calculateRowTotal(row);
                 
                 logEdit('Points Table', `Row ${row.serial} - ${field}`, oldValue, newValue);
-                saveData();
+                saveCurrentState();
                 renderPointsTable();
             }
         }
@@ -966,7 +1160,7 @@
             
             calculateRowTotal(row);
             logEdit('Points Table', `Row ${row.serial} - ${field}`, oldValue ? '👑' : '☐', row[field] ? '👑' : '☐');
-            saveData();
+            saveCurrentState();
             renderPointsTable();
         }
 
@@ -981,28 +1175,293 @@
             row.totalScore = total;
         }
 
-        // Clear Table
-        function clearTable() {
-            if (!confirm('Clear entire table? This cannot be undone!')) return;
+        // Save Tournament
+        function saveTournament() {
+            const tournamentName = document.getElementById('tournamentNameInput').value;
+            
+            if (!tournamentName) {
+                showToast('Please enter a tournament name first!', '❌');
+                document.getElementById('tournamentNameInput').focus();
+                return;
+            }
 
-            logEdit('Points Table', 'Cleared entire table', `${pointsTableData.length} rows`, 'Empty');
-            pointsTableData = [];
-            saveData();
-            renderPointsTable();
-            showToast('Table cleared!', '✅');
+            if (pointsTableData.length === 0) {
+                showToast('No data to save! Add some matches first.', '❌');
+                return;
+            }
+
+            const tournament = {
+                id: currentTournamentId || Date.now(),
+                name: tournamentName,
+                date: document.getElementById('tableDate').value,
+                numBoards: numBoards,
+                data: pointsTableData,
+                savedAt: new Date().toISOString(),
+                modifiedAt: new Date().toISOString()
+            };
+
+            // Find and update or add new
+            const existingIndex = savedTournaments.findIndex(t => t.id === tournament.id);
+            if (existingIndex !== -1) {
+                savedTournaments[existingIndex] = tournament;
+            } else {
+                savedTournaments.unshift(tournament);
+            }
+
+            currentTournamentId = tournament.id;
+
+            saveTournamentsToStorage();
+            logEdit('Tournament', 'Saved tournament', null, tournamentName);
+            showToast('Tournament saved successfully!', '💾');
+            updateSessionDisplay();
         }
 
-        // Save Table
-        function saveTable() {
-            saveData();
-            showToast('Table saved!', '💾');
+        // Open Save As Modal
+        function openSaveAsModal() {
+            document.getElementById('saveAsModal').classList.add('active');
+            document.getElementById('saveAsName').value = document.getElementById('tournamentNameInput').value;
+        }
+
+        // Save As
+        function saveAs() {
+            const newName = document.getElementById('saveAsName').value;
+            
+            if (!newName) {
+                showToast('Please enter a tournament name!', '❌');
+                return;
+            }
+
+            if (pointsTableData.length === 0) {
+                showToast('No data to save! Add some matches first.', '❌');
+                return;
+            }
+
+            const tournament = {
+                id: Date.now(),
+                name: newName,
+                date: document.getElementById('tableDate').value,
+                numBoards: numBoards,
+                data: JSON.parse(JSON.stringify(pointsTableData)), // Deep copy
+                savedAt: new Date().toISOString(),
+                modifiedAt: new Date().toISOString()
+            };
+
+            savedTournaments.unshift(tournament);
+            currentTournamentId = tournament.id;
+
+            document.getElementById('tournamentNameInput').value = newName;
+
+            saveTournamentsToStorage();
+            closeModal('saveAsModal');
+            logEdit('Tournament', 'Saved as new tournament', null, newName);
+            showToast('Tournament saved as new!', '💾');
+            updateSessionDisplay();
+        }
+
+        // Load Tournament
+        function loadTournament(tournamentId) {
+            const tournament = savedTournaments.find(t => t.id === tournamentId);
+            
+            if (!tournament) {
+                showToast('Tournament not found!', '❌');
+                return;
+            }
+
+            if (!confirm(`Load "${tournament.name}"? Current unsaved changes will be lost.`)) {
+                return;
+            }
+
+            // Load tournament data
+            pointsTableData = JSON.parse(JSON.stringify(tournament.data)); // Deep copy
+            numBoards = tournament.numBoards;
+            currentTournamentId = tournament.id;
+
+            document.getElementById('tournamentNameInput').value = tournament.name;
+            document.getElementById('tableDate').value = tournament.date;
+
+            saveCurrentState();
+            renderTableHeader();
+            renderPointsTable();
+            
+            logEdit('Tournament', 'Loaded tournament', null, tournament.name);
+            showToast('Tournament loaded successfully!', '✅');
+            showSection('pointsTable');
+            updateSessionDisplay();
+        }
+
+        // Delete Tournament
+        function deleteTournament(tournamentId) {
+            const tournament = savedTournaments.find(t => t.id === tournamentId);
+            
+            if (!tournament) return;
+
+            if (!confirm(`Delete "${tournament.name}"? This cannot be undone!`)) {
+                return;
+            }
+
+            savedTournaments = savedTournaments.filter(t => t.id !== tournamentId);
+            
+            if (currentTournamentId === tournamentId) {
+                currentTournamentId = null;
+            }
+
+            saveTournamentsToStorage();
+            renderTournamentsList();
+            logEdit('Tournament', 'Deleted tournament', tournament.name, 'Deleted');
+            showToast('Tournament deleted!', '✅');
+        }
+
+        // Export Tournament
+        function exportTournament(tournamentId) {
+            const tournament = savedTournaments.find(t => t.id === tournamentId);
+            
+            if (!tournament) {
+                showToast('Tournament not found!', '❌');
+                return;
+            }
+
+            const data = JSON.stringify(tournament, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${tournament.name.replace(/\s+/g, '_')}_${tournament.date}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showToast('Tournament exported!', '📥');
+        }
+
+        // Open Import Modal
+        function openImportModal() {
+            document.getElementById('importModal').classList.add('active');
+        }
+
+        // Handle File Import
+        function handleFileImport(event) {
+            const file = event.target.files[0];
+            
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const tournament = JSON.parse(e.target.result);
+                    
+                    // Validate tournament structure
+                    if (!tournament.name || !tournament.data || !Array.isArray(tournament.data)) {
+                        throw new Error('Invalid tournament file format');
+                    }
+
+                    // Generate new ID to avoid conflicts
+                    tournament.id = Date.now();
+                    tournament.savedAt = new Date().toISOString();
+
+                    savedTournaments.unshift(tournament);
+                    saveTournamentsToStorage();
+                    
+                    closeModal('importModal');
+                    renderTournamentsList();
+                    
+                    logEdit('Tournament', 'Imported tournament', null, tournament.name);
+                    showToast('Tournament imported successfully!', '📤');
+                    
+                } catch (error) {
+                    showToast('Invalid JSON file! ' + error.message, '❌');
+                }
+            };
+            
+            reader.readAsText(file);
+        }
+
+        // Render Tournaments List
+        function renderTournamentsList() {
+            const container = document.getElementById('tournamentsList');
+            
+            if (savedTournaments.length === 0) {
+                container.innerHTML = `
+                    <p style="text-align: center; padding: 60px; opacity: 0.6; font-size: 1.2em;">
+                        No saved tournaments yet. Create and save one!
+                    </p>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            
+            savedTournaments.forEach(tournament => {
+                const card = document.createElement('div');
+                card.className = 'tournament-card';
+                
+                const savedDate = new Date(tournament.savedAt);
+                const matchCount = tournament.data.length;
+                
+                card.innerHTML = `
+                    <h3>${tournament.name}</h3>
+                    <div class="tournament-info">
+                        <div class="tournament-info-item">
+                            <strong>📅 Date:</strong>
+                            ${tournament.date}
+                        </div>
+                        <div class="tournament-info-item">
+                            <strong>🎯 Matches:</strong>
+                            ${matchCount}
+                        </div>
+                        <div class="tournament-info-item">
+                            <strong>📊 Boards:</strong>
+                            ${tournament.numBoards}
+                        </div>
+                        <div class="tournament-info-item">
+                            <strong>💾 Saved:</strong>
+                            ${savedDate.toLocaleString()}
+                        </div>
+                    </div>
+                    <div class="tournament-actions">
+                        <button class="btn btn-success" onclick="loadTournament(${tournament.id})">
+                            📂 Load
+                        </button>
+                        <button class="btn btn-primary" onclick="exportTournament(${tournament.id})">
+                            📥 Export
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteTournament(${tournament.id})">
+                            🗑️ Delete
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // Clear All Tournaments
+        function clearAllTournaments() {
+            if (!confirm('Delete ALL saved tournaments? This cannot be undone!')) return;
+
+            savedTournaments = [];
+            currentTournamentId = null;
+            saveTournamentsToStorage();
+            renderTournamentsList();
+            
+            logEdit('Tournament', 'Deleted all tournaments', `${savedTournaments.length} tournaments`, 'Empty');
+            showToast('All tournaments deleted!', '✅');
+        }
+
+        // Clear Table
+        function clearTable() {
+            if (!confirm('Clear entire table? This will not delete the saved tournament.')) return;
+
+            logEdit('Points Table', 'Cleared table', `${pointsTableData.length} rows`, 'Empty');
+            pointsTableData = [];
+            saveCurrentState();
+            renderPointsTable();
+            showToast('Table cleared!', '✅');
         }
 
         // Update Table Date
         function updateTableDate() {
             const date = document.getElementById('tableDate').value;
             logEdit('Settings', 'Table date updated', null, date);
-            saveData();
+            saveCurrentState();
         }
 
         // Log Edit
@@ -1023,7 +1482,7 @@
                 editLog = editLog.slice(0, 500);
             }
 
-            saveData();
+            saveEditLog();
             renderEditLog();
         }
 
@@ -1059,7 +1518,7 @@
             if (!confirm('Clear all edit logs? This cannot be undone!')) return;
 
             editLog = [];
-            saveData();
+            saveEditLog();
             renderEditLog();
             showToast('Log cleared!', '✅');
         }
@@ -1083,6 +1542,11 @@
             showToast('Log exported!', '📥');
         }
 
+        // Close Modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
         // Toast
         function showToast(message, icon = '✅') {
             const toast = document.createElement('div');
@@ -1099,28 +1563,58 @@
             }, 3000);
         }
 
-        // Storage
-        function saveData() {
-            localStorage.setItem('carromPointsTableV2', JSON.stringify(pointsTableData));
+        // Storage Functions
+        function saveCurrentState() {
+            localStorage.setItem('carromCurrentTable', JSON.stringify(pointsTableData));
             localStorage.setItem('carromNumBoards', numBoards.toString());
+            localStorage.setItem('carromCurrentTournamentId', currentTournamentId?.toString() || '');
+        }
+
+        function saveTournamentsToStorage() {
+            localStorage.setItem('carromSavedTournaments', JSON.stringify(savedTournaments));
+        }
+
+        function saveEditLog() {
             localStorage.setItem('carromEditLog', JSON.stringify(editLog));
+        }
+
+        function saveUserInfo() {
             localStorage.setItem('carromUserInfo', JSON.stringify(userInfo));
         }
 
-        function loadData() {
-            const saved1 = localStorage.getItem('carromPointsTableV2');
-            const saved2 = localStorage.getItem('carromNumBoards');
-            const saved3 = localStorage.getItem('carromEditLog');
-            const saved4 = localStorage.getItem('carromUserInfo');
+        function loadAllData() {
+            // Load current table
+            const savedTable = localStorage.getItem('carromCurrentTable');
+            if (savedTable) pointsTableData = JSON.parse(savedTable);
 
-            if (saved1) pointsTableData = JSON.parse(saved1);
-            if (saved2) numBoards = parseInt(saved2);
-            if (saved3) editLog = JSON.parse(saved3);
-            if (saved4) {
-                const loadedInfo = JSON.parse(saved4);
+            const savedBoards = localStorage.getItem('carromNumBoards');
+            if (savedBoards) numBoards = parseInt(savedBoards);
+
+            const savedCurrentId = localStorage.getItem('carromCurrentTournamentId');
+            if (savedCurrentId) currentTournamentId = parseInt(savedCurrentId) || null;
+
+            // Load tournaments
+            const savedTournamentsData = localStorage.getItem('carromSavedTournaments');
+            if (savedTournamentsData) savedTournaments = JSON.parse(savedTournamentsData);
+
+            // Load edit log
+            const savedLog = localStorage.getItem('carromEditLog');
+            if (savedLog) editLog = JSON.parse(savedLog);
+
+            // Load user info
+            const savedUserInfo = localStorage.getItem('carromUserInfo');
+            if (savedUserInfo) {
+                const loadedInfo = JSON.parse(savedUserInfo);
                 userInfo.mobile = loadedInfo.mobile || 'Not Set';
             }
         }
+
+        // Auto-save every 30 seconds
+        setInterval(function() {
+            if (pointsTableData.length > 0) {
+                saveCurrentState();
+            }
+        }, 30000);
     </script>
 </body>
 </html>
