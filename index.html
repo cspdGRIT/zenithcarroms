@@ -890,7 +890,7 @@
                 <div id="pointsTable" class="content-section">
                     <div class="section-header">
                         <h2>📊 Points Table</h2>
-                        <p>Team vs Team matches • Color-coded board winners • Click board buttons to assign winners • Queen is visual only</p>
+                        <p>Per-team scoring • Break & Queen per board (colored) • First to 25 wins • Separate team scores</p>
                     </div>
 
                     <div style="background: linear-gradient(135deg, #FFF8DC, #FFE4B5); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 3px solid #FFD700;">
@@ -1234,12 +1234,19 @@
         // Add Board to Specific Row
         function addBoardToRow(rowIndex) {
             const row = pointsTableData[rowIndex];
-            if (!row.numBoards) row.numBoards = 3; // Default if not set
+            if (!row.numBoards) row.numBoards = 3;
+            
+            // Check if either team has reached 25
+            if (row.team1_score >= 25 || row.team2_score >= 25) {
+                const msg = `⚠️ Warning: ${row.team1_score >= 25 ? row.team1 : row.team2} has already reached 25 points! Are you sure you want to add another board?`;
+                if (!confirm(msg)) return;
+            }
             
             row.numBoards++;
-            row[`board${row.numBoards}_q`] = false;
-            row[`board${row.numBoards}_pts`] = 0;
-            row[`board${row.numBoards}_winner`] = '';
+            row[`board${row.numBoards}_q_team`] = '';
+            row[`board${row.numBoards}_break_team`] = '';
+            row[`board${row.numBoards}_team1_pts`] = 0;
+            row[`board${row.numBoards}_team2_pts`] = 0;
             
             calculateRowTotal(row);
             logEdit('Points Table', `Row ${row.serial} - Added Board ${row.numBoards}`, null, `Board ${row.numBoards}`);
@@ -1263,8 +1270,10 @@
                 return;
             }
 
-            delete row[`board${row.numBoards}_q`];
-            delete row[`board${row.numBoards}_pts`];
+            delete row[`board${row.numBoards}_q_team`];
+            delete row[`board${row.numBoards}_break_team`];
+            delete row[`board${row.numBoards}_team1_pts`];
+            delete row[`board${row.numBoards}_team2_pts`];
             row.numBoards--;
             
             calculateRowTotal(row);
@@ -1286,20 +1295,22 @@
             const row = {
                 id: Date.now(),
                 serial: pointsTableData.length + 1,
-                break: false,
                 team1: teams[0]?.name || '',
                 team2: teams[1]?.name || '',
+                team1_score: 0, // Separate score for team1
+                team2_score: 0, // Separate score for team2
                 wonBy: '', // Winning team
                 numBoards: 3 // Default 3 boards per row
             };
 
             for (let i = 1; i <= row.numBoards; i++) {
-                row[`board${i}_q`] = false;
-                row[`board${i}_pts`] = 0;
-                row[`board${i}_winner`] = ''; // Board winner (team1 or team2)
+                row[`board${i}_q_team`] = ''; // Queen pocketed by which team
+                row[`board${i}_break_team`] = ''; // Break by which team
+                row[`board${i}_team1_pts`] = 0;
+                row[`board${i}_team2_pts`] = 0;
             }
 
-            calculateRowTotal(row); // Calculate initial total
+            calculateRowTotal(row); // Calculate initial totals
 
             pointsTableData.push(row);
             logEdit('Points Table', 'Added new match', null, `Row ${row.serial}`);
@@ -1416,17 +1427,20 @@
             
             // Create dynamic header
             let headerHTML = '<tr>';
-            headerHTML += '<th>S</th><th>Break</th><th>Teams/Legend</th>';
+            headerHTML += '<th rowspan="2">S</th><th rowspan="2">Teams</th>';
             for (let i = 1; i <= maxBoards; i++) {
-                headerHTML += `<th colspan="2" class="board-header">B${i}</th>`;
+                headerHTML += `<th colspan="4" class="board-header">B${i}</th>`;
             }
-            headerHTML += '<th>Total Score</th><th>Won By</th><th>Actions</th></tr>';
+            headerHTML += '<th colspan="2" rowspan="2">Scores</th><th rowspan="2">Won By</th><th rowspan="2">Actions</th></tr>';
             
-            headerHTML += '<tr><th colspan="3"></th>';
+            headerHTML += '<tr>';
             for (let i = 1; i <= maxBoards; i++) {
-                headerHTML += '<th class="sub-header">Q</th><th class="sub-header">Pts</th>';
+                headerHTML += '<th class="sub-header">Brk</th>';
+                headerHTML += '<th class="sub-header">Q</th>';
+                headerHTML += '<th class="sub-header">T1</th>';
+                headerHTML += '<th class="sub-header">T2</th>';
             }
-            headerHTML += '<th colspan="3"></th></tr>';
+            headerHTML += '</tr>';
             
             thead.innerHTML = headerHTML;
 
@@ -1435,7 +1449,7 @@
                 const tr = document.createElement('tr');
                 const rowBoards = row.numBoards || 3;
                 
-                // Ensure total is calculated
+                // Ensure totals are calculated
                 calculateRowTotal(row);
                 
                 // Get team colors
@@ -1444,15 +1458,7 @@
                 
                 tr.innerHTML = `<td class="serial-col">${row.serial}</td>`;
                 
-                tr.innerHTML += `
-                    <td>
-                        <input type="checkbox" class="break-checkbox" 
-                               ${row.break ? 'checked' : ''} 
-                               onchange="toggleBreak(${index})">
-                    </td>
-                `;
-                
-                // Teams/Legend column
+                // Teams column
                 tr.innerHTML += `
                     <td style="min-width: 150px;">
                         <div style="margin-bottom: 5px;">
@@ -1470,42 +1476,71 @@
                     </td>
                 `;
                 
-                // Dynamic boards per row with winner colors
+                // Dynamic boards per row
                 for (let i = 1; i <= maxBoards; i++) {
                     if (i <= rowBoards) {
-                        const boardWinner = row[`board${i}_winner`] || '';
-                        const cellColor = boardWinner === row.team1 ? team1Color : 
-                                         boardWinner === row.team2 ? team2Color : 'white';
+                        const breakTeam = row[`board${i}_break_team`] || '';
+                        const qTeam = row[`board${i}_q_team`] || '';
+                        const breakColor = breakTeam === row.team1 ? team1Color : 
+                                          breakTeam === row.team2 ? team2Color : 'white';
+                        const qColor = qTeam === row.team1 ? team1Color : 
+                                      qTeam === row.team2 ? team2Color : 'white';
                         
+                        // Break column with color
                         tr.innerHTML += `
-                            <td onclick="toggleQueen(${index}, 'board${i}_q')" style="background: ${cellColor};">
-                                <span class="queen-box ${row[`board${i}_q`] ? 'checked' : ''}">
-                                    ${row[`board${i}_q`] ? '👑' : '☐'}
+                            <td onclick="toggleBoardTeam(${index}, ${i}, 'break')" style="background: ${breakColor}; cursor: pointer;" title="Click to toggle break">
+                                <span style="font-size: 1.2em; font-weight: 900;">
+                                    ${breakTeam ? '🎯' : '○'}
                                 </span>
                             </td>
                         `;
                         
+                        // Queen column with color
                         tr.innerHTML += `
-                            <td class="editable-cell" onclick="editCell(${index}, 'board${i}_pts')" style="background: ${cellColor};">
-                                ${row[`board${i}_pts`] || 0}
+                            <td onclick="toggleBoardTeam(${index}, ${i}, 'q')" style="background: ${qColor}; cursor: pointer;" title="Click to toggle queen">
+                                <span class="queen-box ${qTeam ? 'checked' : ''}">
+                                    ${qTeam ? '👑' : '☐'}
+                                </span>
+                            </td>
+                        `;
+                        
+                        // Team1 points
+                        tr.innerHTML += `
+                            <td class="editable-cell" onclick="editTeamPoints(${index}, ${i}, 'team1')" style="background: ${team1Color}; color: white; font-weight: 700;">
+                                ${row[`board${i}_team1_pts`] || 0}
+                            </td>
+                        `;
+                        
+                        // Team2 points
+                        tr.innerHTML += `
+                            <td class="editable-cell" onclick="editTeamPoints(${index}, ${i}, 'team2')" style="background: ${team2Color}; color: white; font-weight: 700;">
+                                ${row[`board${i}_team2_pts`] || 0}
                             </td>
                         `;
                     } else {
-                        tr.innerHTML += `<td style="background: #f5f5f5;"></td><td style="background: #f5f5f5;"></td>`;
+                        tr.innerHTML += `<td style="background: #f5f5f5;"></td><td style="background: #f5f5f5;"></td><td style="background: #f5f5f5;"></td><td style="background: #f5f5f5;"></td>`;
                     }
                 }
                 
+                // Scores column (both teams)
                 tr.innerHTML += `
-                    <td>
-                        <div class="total-score">${row.totalScore || 0}</div>
+                    <td colspan="2">
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <div style="background: ${team1Color}; color: white; padding: 5px; border-radius: 5px; font-weight: 900; font-size: 1.2em; ${row.team1_score >= 25 ? 'border: 3px solid #FFD700;' : ''}">
+                                ${row.team1_score} ${row.team1_score >= 25 ? '🏆' : ''}
+                            </div>
+                            <div style="background: ${team2Color}; color: white; padding: 5px; border-radius: 5px; font-weight: 900; font-size: 1.2em; ${row.team2_score >= 25 ? 'border: 3px solid #FFD700;' : ''}">
+                                ${row.team2_score} ${row.team2_score >= 25 ? '🏆' : ''}
+                            </div>
+                        </div>
                     </td>
                 `;
 
                 // Won By dropdown
                 tr.innerHTML += `
                     <td>
-                        <select onchange="updateWonBy(${index}, this.value)" style="width: 100%; padding: 8px; font-weight: 700; border: 3px solid #D2691E; border-radius: 8px;">
-                            <option value="">Select Winner</option>
+                        <select onchange="updateWonBy(${index}, this.value)" style="width: 100%; padding: 8px; font-weight: 700; border: 3px solid #D2691E; border-radius: 8px; ${row.wonBy ? 'background: #90EE90;' : ''}">
+                            <option value="">Select</option>
                             <option value="${row.team1}" ${row.wonBy === row.team1 ? 'selected' : ''}>${row.team1}</option>
                             <option value="${row.team2}" ${row.wonBy === row.team2 ? 'selected' : ''}>${row.team2}</option>
                         </select>
@@ -1521,19 +1556,6 @@
                             <button class="row-btn row-btn-success" onclick="addBoardToRow(${index})" title="Add Board">➕</button>
                             <button class="row-btn row-btn-warning" onclick="removeBoardFromRow(${index})" title="Remove Board">➖</button>
                             <button class="row-btn row-btn-delete" onclick="deleteRow(${index})" title="Delete">🗑️</button>
-                        </div>
-                        <div style="margin-top: 5px; font-size: 0.85em;">
-                            ${Array.from({length: rowBoards}, (_, i) => {
-                                const boardNum = i + 1;
-                                return `<button class="row-btn" onclick="setBoardWinner(${index}, ${boardNum}, '${row.team1}')" 
-                                        style="background: ${team1Color}; color: white; padding: 3px 6px; margin: 2px;" title="Board ${boardNum} won by ${row.team1}">B${boardNum}</button>`;
-                            }).join('')}
-                            <br>
-                            ${Array.from({length: rowBoards}, (_, i) => {
-                                const boardNum = i + 1;
-                                return `<button class="row-btn" onclick="setBoardWinner(${index}, ${boardNum}, '${row.team2}')" 
-                                        style="background: ${team2Color}; color: white; padding: 3px 6px; margin: 2px;" title="Board ${boardNum} won by ${row.team2}">B${boardNum}</button>`;
-                            }).join('')}
                         </div>
                     </td>
                 `;
@@ -1587,19 +1609,32 @@
             updateStats();
         }
 
-        // Calculate Row Total - Queen is just visual indicator, NOT worth points!
+        // Calculate Row Total - Separate scores for each team
         function calculateRowTotal(row) {
-            let total = 0;
+            let team1Total = 0;
+            let team2Total = 0;
             const rowBoards = row.numBoards || 3;
             
-            // Only sum the Pts columns - Queen is just a visual indicator
+            // Sum points for each team across all boards
             for (let i = 1; i <= rowBoards; i++) {
-                const pts = parseFloat(row[`board${i}_pts`]) || 0;
-                total += pts;
+                team1Total += parseFloat(row[`board${i}_team1_pts`]) || 0;
+                team2Total += parseFloat(row[`board${i}_team2_pts`]) || 0;
             }
             
-            row.totalScore = total;
-            return total;
+            row.team1_score = team1Total;
+            row.team2_score = team2Total;
+            
+            // Auto-determine winner if someone reached 25
+            if (team1Total >= 25 && team2Total < 25) {
+                row.wonBy = row.team1;
+            } else if (team2Total >= 25 && team1Total < 25) {
+                row.wonBy = row.team2;
+            } else if (team1Total >= 25 && team2Total >= 25) {
+                // Both reached 25, higher score wins
+                row.wonBy = team1Total > team2Total ? row.team1 : row.team2;
+            }
+            
+            return { team1Total, team2Total };
         }
 
         // Update Stats
@@ -1620,17 +1655,19 @@
             pointsTableData.forEach(row => {
                 const rowBoards = row.numBoards || 3;
                 for (let i = 1; i <= rowBoards; i++) {
-                    if (row[`board${i}_q`]) count++;
+                    if (row[`board${i}_q_team`]) count++;
                 }
             });
             return count;
         }
 
         function calculateTotalScore() {
-            return pointsTableData.reduce((sum, row) => {
-                calculateRowTotal(row); // Ensure row total is current
-                return sum + (row.totalScore || 0);
-            }, 0);
+            let total = 0;
+            pointsTableData.forEach(row => {
+                calculateRowTotal(row);
+                total += (row.team1_score || 0) + (row.team2_score || 0);
+            });
+            return total;
         }
 
         // Clear Table
@@ -2154,6 +2191,7 @@
         // Helper Functions for Teams in Points Table
         function updateTeam(rowIndex, field, value) {
             pointsTableData[rowIndex][field] = value;
+            calculateRowTotal(pointsTableData[rowIndex]);
             logEdit('Points Table', `Row ${pointsTableData[rowIndex].serial} - ${field}`, null, value);
             saveCurrentState();
             renderPointsTable();
@@ -2165,13 +2203,63 @@
             saveCurrentState();
         }
 
-        function setBoardWinner(rowIndex, boardNum, winner) {
+        function toggleBoardTeam(rowIndex, boardNum, type) {
             const row = pointsTableData[rowIndex];
-            row[`board${boardNum}_winner`] = winner;
-            logEdit('Points Table', `Row ${row.serial} - Board ${boardNum} winner`, null, winner);
+            const field = type === 'break' ? `board${boardNum}_break_team` : `board${boardNum}_q_team`;
+            const currentValue = row[field];
+            
+            // Cycle through: '' -> team1 -> team2 -> ''
+            if (!currentValue) {
+                row[field] = row.team1;
+            } else if (currentValue === row.team1) {
+                row[field] = row.team2;
+            } else {
+                row[field] = '';
+            }
+            
+            logEdit('Points Table', `Row ${row.serial} - Board ${boardNum} ${type}`, currentValue, row[field]);
             saveCurrentState();
             renderPointsTable();
-            showToast(`Board ${boardNum} won by ${winner}!`, '✅');
+        }
+
+        function editTeamPoints(rowIndex, boardNum, team) {
+            const row = pointsTableData[rowIndex];
+            const field = `board${boardNum}_${team}_pts`;
+            const oldValue = row[field] || 0;
+            
+            const newValue = prompt(`Enter points for ${team === 'team1' ? row.team1 : row.team2}:`, oldValue);
+            
+            if (newValue !== null && newValue !== oldValue) {
+                row[field] = parseFloat(newValue) || 0;
+                calculateRowTotal(row);
+                
+                logEdit('Points Table', `Row ${row.serial} - Board ${boardNum} ${team} points`, oldValue, newValue);
+                saveCurrentState();
+                renderPointsTable();
+                updateStats();
+                
+                // Check if team reached 25
+                if (row[`${team}_score`] >= 25) {
+                    showToast(`🏆 ${team === 'team1' ? row.team1 : row.team2} reached 25 points!`, '✅');
+                }
+            }
+        }
+
+        // Remove old functions that are no longer needed
+        function toggleBreak(rowIndex) {
+            // No longer used - break is per board now
+        }
+
+        function toggleQueen(rowIndex, field) {
+            // No longer used - queen is per board with team color now
+        }
+
+        function editCell(rowIndex, field) {
+            // No longer used - using editTeamPoints now
+        }
+
+        function setBoardWinner(rowIndex, boardNum, winner) {
+            // No longer used - removed board winner buttons
         }
 
         // Storage Functions
@@ -2200,12 +2288,32 @@
             const savedTable = localStorage.getItem('carromCurrentTable');
             if (savedTable) {
                 pointsTableData = JSON.parse(savedTable);
-                // Ensure backward compatibility - add numBoards to old data
+                // Ensure backward compatibility
                 pointsTableData.forEach(row => {
                     if (!row.numBoards) row.numBoards = 3;
-                    if (!row.team1) row.team1 = row.player || '';
-                    if (!row.team2) row.team2 = '';
+                    if (!row.team1) row.team1 = row.player || teams[0]?.name || '';
+                    if (!row.team2) row.team2 = teams[1]?.name || '';
                     if (!row.wonBy) row.wonBy = '';
+                    if (row.team1_score === undefined) row.team1_score = 0;
+                    if (row.team2_score === undefined) row.team2_score = 0;
+                    
+                    // Convert old board structure to new
+                    for (let i = 1; i <= row.numBoards; i++) {
+                        if (row[`board${i}_q_team`] === undefined) {
+                            row[`board${i}_q_team`] = '';
+                        }
+                        if (row[`board${i}_break_team`] === undefined) {
+                            row[`board${i}_break_team`] = '';
+                        }
+                        if (row[`board${i}_team1_pts`] === undefined) {
+                            row[`board${i}_team1_pts`] = row[`board${i}_pts`] || 0;
+                        }
+                        if (row[`board${i}_team2_pts`] === undefined) {
+                            row[`board${i}_team2_pts`] = 0;
+                        }
+                    }
+                    
+                    calculateRowTotal(row);
                 });
             }
 
@@ -2222,6 +2330,8 @@
                             if (!row.numBoards) row.numBoards = 3;
                             if (!row.team1) row.team1 = row.player || '';
                             if (!row.team2) row.team2 = '';
+                            if (row.team1_score === undefined) row.team1_score = 0;
+                            if (row.team2_score === undefined) row.team2_score = 0;
                         });
                     }
                 });
