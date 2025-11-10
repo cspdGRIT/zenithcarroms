@@ -434,15 +434,12 @@
             font-size: 1.1em;
         }
 
-        .action-col {
-            background: linear-gradient(135deg, rgba(220, 20, 60, 0.05), rgba(255, 99, 71, 0.05)) !important;
-        }
-
         .row-actions {
             display: flex;
             gap: 8px;
             justify-content: center;
             flex-wrap: wrap;
+            margin-bottom: 5px;
         }
 
         .row-btn {
@@ -459,6 +456,11 @@
         .row-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .action-col {
+            background: linear-gradient(135deg, rgba(220, 20, 60, 0.05), rgba(255, 99, 71, 0.05)) !important;
+            min-width: 200px;
         }
 
         .row-btn-delete {
@@ -815,6 +817,9 @@
                 <div class="nav-item" onclick="showSection('pointsTable')">
                     <span class="icon">📊</span> Points Table
                 </div>
+                <div class="nav-item" onclick="showSection('teams')">
+                    <span class="icon">👥</span> Teams
+                </div>
                 <div class="nav-item" onclick="showSection('savedTournaments')">
                     <span class="icon">💾</span> Saved Tournaments
                 </div>
@@ -885,7 +890,7 @@
                 <div id="pointsTable" class="content-section">
                     <div class="section-header">
                         <h2>📊 Points Table</h2>
-                        <p>Each row can have different boards • Queen is visual indicator only • Use ➕/➖ in Actions to manage boards per match</p>
+                        <p>Team vs Team matches • Color-coded board winners • Click board buttons to assign winners • Queen is visual only</p>
                     </div>
 
                     <div style="background: linear-gradient(135deg, #FFF8DC, #FFE4B5); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 3px solid #FFD700;">
@@ -941,6 +946,37 @@
                         <table class="points-table" id="mainPointsTable">
                             <thead id="tableHeader"></thead>
                             <tbody id="pointsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Teams Configuration -->
+                <div id="teams" class="content-section">
+                    <div class="section-header">
+                        <h2>👥 Teams Configuration</h2>
+                        <p>Add and manage teams with colors for the tournament</p>
+                    </div>
+
+                    <div class="table-controls">
+                        <button class="btn btn-primary" onclick="addTeam()">
+                            ➕ Add Team
+                        </button>
+                        <button class="btn btn-danger" onclick="clearTeams()">
+                            🗑️ Clear All Teams
+                        </button>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="points-table">
+                            <thead>
+                                <tr>
+                                    <th>Team Name</th>
+                                    <th>Color</th>
+                                    <th>Preview</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teamsTableBody"></tbody>
                         </table>
                     </div>
                 </div>
@@ -1063,7 +1099,15 @@
         let pointsTableData = [];
         let editLog = [];
         let savedTournaments = [];
+        let teams = []; // Teams configuration
         let currentTournamentId = null;
+        
+        // Default color palette for auto-assignment
+        const defaultColors = [
+            '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', 
+            '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2',
+            '#F8B739', '#52B788', '#E76F51', '#2A9D8F'
+        ];
         let userInfo = {
             ip: 'Unknown',
             mobile: 'Not Set',
@@ -1077,6 +1121,7 @@
             updateSessionDisplay();
             renderTableHeader();
             renderPointsTable();
+            renderTeamsTable();
             renderEditLog();
             renderTournamentsList();
             updateStats();
@@ -1126,6 +1171,8 @@
                 renderTournamentsList();
             } else if (section === 'dashboard') {
                 updateDashboardStats();
+            } else if (section === 'teams') {
+                renderTeamsTable();
             }
         }
 
@@ -1192,6 +1239,7 @@
             row.numBoards++;
             row[`board${row.numBoards}_q`] = false;
             row[`board${row.numBoards}_pts`] = 0;
+            row[`board${row.numBoards}_winner`] = '';
             
             calculateRowTotal(row);
             logEdit('Points Table', `Row ${row.serial} - Added Board ${row.numBoards}`, null, `Board ${row.numBoards}`);
@@ -1229,17 +1277,26 @@
 
         // Add Match Row
         function addMatchRow() {
+            if (teams.length < 2) {
+                showToast('Please add at least 2 teams first!', '❌');
+                showSection('teams');
+                return;
+            }
+
             const row = {
                 id: Date.now(),
                 serial: pointsTableData.length + 1,
                 break: false,
-                player: '',
+                team1: teams[0]?.name || '',
+                team2: teams[1]?.name || '',
+                wonBy: '', // Winning team
                 numBoards: 3 // Default 3 boards per row
             };
 
             for (let i = 1; i <= row.numBoards; i++) {
                 row[`board${i}_q`] = false;
                 row[`board${i}_pts`] = 0;
+                row[`board${i}_winner`] = ''; // Board winner (team1 or team2)
             }
 
             calculateRowTotal(row); // Calculate initial total
@@ -1334,7 +1391,9 @@
             const duplicate = JSON.parse(JSON.stringify(original)); // Deep copy
             duplicate.id = Date.now();
             duplicate.serial = pointsTableData.length + 1;
-            duplicate.player = original.player + ' (Copy)';
+            duplicate.team1 = original.team1;
+            duplicate.team2 = original.team2;
+            duplicate.wonBy = '';
             duplicate.numBoards = original.numBoards || 3; // Preserve board count
 
             pointsTableData.push(duplicate);
@@ -1357,17 +1416,17 @@
             
             // Create dynamic header
             let headerHTML = '<tr>';
-            headerHTML += '<th>S</th><th>Break</th><th>Player</th>';
+            headerHTML += '<th>S</th><th>Break</th><th>Teams/Legend</th>';
             for (let i = 1; i <= maxBoards; i++) {
                 headerHTML += `<th colspan="2" class="board-header">B${i}</th>`;
             }
-            headerHTML += '<th>Total Score</th><th>Actions</th></tr>';
+            headerHTML += '<th>Total Score</th><th>Won By</th><th>Actions</th></tr>';
             
             headerHTML += '<tr><th colspan="3"></th>';
             for (let i = 1; i <= maxBoards; i++) {
                 headerHTML += '<th class="sub-header">Q</th><th class="sub-header">Pts</th>';
             }
-            headerHTML += '<th colspan="2"></th></tr>';
+            headerHTML += '<th colspan="3"></th></tr>';
             
             thead.innerHTML = headerHTML;
 
@@ -1379,6 +1438,10 @@
                 // Ensure total is calculated
                 calculateRowTotal(row);
                 
+                // Get team colors
+                const team1Color = teams.find(t => t.name === row.team1)?.color || '#999';
+                const team2Color = teams.find(t => t.name === row.team2)?.color || '#666';
+                
                 tr.innerHTML = `<td class="serial-col">${row.serial}</td>`;
                 
                 tr.innerHTML += `
@@ -1389,18 +1452,33 @@
                     </td>
                 `;
                 
+                // Teams/Legend column
                 tr.innerHTML += `
-                    <td class="editable-cell ${!row.player ? 'empty' : ''}" 
-                        onclick="editCell(${index}, 'player')">
-                        ${row.player || 'Click to add'}
+                    <td style="min-width: 150px;">
+                        <div style="margin-bottom: 5px;">
+                            <span style="display: inline-block; width: 15px; height: 15px; background: ${team1Color}; border: 2px solid #333; margin-right: 5px;"></span>
+                            <select onchange="updateTeam(${index}, 'team1', this.value)" style="width: 100%; padding: 4px; font-size: 0.9em; font-weight: 600;">
+                                ${teams.map(t => `<option value="${t.name}" ${row.team1 === t.name ? 'selected' : ''}>${t.name}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div>
+                            <span style="display: inline-block; width: 15px; height: 15px; background: ${team2Color}; border: 2px solid #333; margin-right: 5px;"></span>
+                            <select onchange="updateTeam(${index}, 'team2', this.value)" style="width: 100%; padding: 4px; font-size: 0.9em; font-weight: 600;">
+                                ${teams.map(t => `<option value="${t.name}" ${row.team2 === t.name ? 'selected' : ''}>${t.name}</option>`).join('')}
+                            </select>
+                        </div>
                     </td>
                 `;
                 
-                // Dynamic boards per row
+                // Dynamic boards per row with winner colors
                 for (let i = 1; i <= maxBoards; i++) {
                     if (i <= rowBoards) {
+                        const boardWinner = row[`board${i}_winner`] || '';
+                        const cellColor = boardWinner === row.team1 ? team1Color : 
+                                         boardWinner === row.team2 ? team2Color : 'white';
+                        
                         tr.innerHTML += `
-                            <td onclick="toggleQueen(${index}, 'board${i}_q')">
+                            <td onclick="toggleQueen(${index}, 'board${i}_q')" style="background: ${cellColor};">
                                 <span class="queen-box ${row[`board${i}_q`] ? 'checked' : ''}">
                                     ${row[`board${i}_q`] ? '👑' : '☐'}
                                 </span>
@@ -1408,12 +1486,11 @@
                         `;
                         
                         tr.innerHTML += `
-                            <td class="editable-cell" onclick="editCell(${index}, 'board${i}_pts')">
+                            <td class="editable-cell" onclick="editCell(${index}, 'board${i}_pts')" style="background: ${cellColor};">
                                 ${row[`board${i}_pts`] || 0}
                             </td>
                         `;
                     } else {
-                        // Empty cells for rows with fewer boards
                         tr.innerHTML += `<td style="background: #f5f5f5;"></td><td style="background: #f5f5f5;"></td>`;
                     }
                 }
@@ -1421,6 +1498,17 @@
                 tr.innerHTML += `
                     <td>
                         <div class="total-score">${row.totalScore || 0}</div>
+                    </td>
+                `;
+
+                // Won By dropdown
+                tr.innerHTML += `
+                    <td>
+                        <select onchange="updateWonBy(${index}, this.value)" style="width: 100%; padding: 8px; font-weight: 700; border: 3px solid #D2691E; border-radius: 8px;">
+                            <option value="">Select Winner</option>
+                            <option value="${row.team1}" ${row.wonBy === row.team1 ? 'selected' : ''}>${row.team1}</option>
+                            <option value="${row.team2}" ${row.wonBy === row.team2 ? 'selected' : ''}>${row.team2}</option>
+                        </select>
                     </td>
                 `;
 
@@ -1433,6 +1521,19 @@
                             <button class="row-btn row-btn-success" onclick="addBoardToRow(${index})" title="Add Board">➕</button>
                             <button class="row-btn row-btn-warning" onclick="removeBoardFromRow(${index})" title="Remove Board">➖</button>
                             <button class="row-btn row-btn-delete" onclick="deleteRow(${index})" title="Delete">🗑️</button>
+                        </div>
+                        <div style="margin-top: 5px; font-size: 0.85em;">
+                            ${Array.from({length: rowBoards}, (_, i) => {
+                                const boardNum = i + 1;
+                                return `<button class="row-btn" onclick="setBoardWinner(${index}, ${boardNum}, '${row.team1}')" 
+                                        style="background: ${team1Color}; color: white; padding: 3px 6px; margin: 2px;" title="Board ${boardNum} won by ${row.team1}">B${boardNum}</button>`;
+                            }).join('')}
+                            <br>
+                            ${Array.from({length: rowBoards}, (_, i) => {
+                                const boardNum = i + 1;
+                                return `<button class="row-btn" onclick="setBoardWinner(${index}, ${boardNum}, '${row.team2}')" 
+                                        style="background: ${team2Color}; color: white; padding: 3px 6px; margin: 2px;" title="Board ${boardNum} won by ${row.team2}">B${boardNum}</button>`;
+                            }).join('')}
                         </div>
                     </td>
                 `;
@@ -1456,11 +1557,14 @@
             const row = pointsTableData[rowIndex];
             const oldValue = row[field];
             
-            const promptMessage = field === 'player' ? 'Enter player name:' : 'Enter points:';
+            // Only allow editing points fields
+            if (!field.includes('_pts')) return;
+            
+            const promptMessage = 'Enter points:';
             const newValue = prompt(promptMessage, oldValue);
             
             if (newValue !== null && newValue !== oldValue) {
-                row[field] = isNaN(newValue) ? newValue : parseFloat(newValue) || 0;
+                row[field] = parseFloat(newValue) || 0;
                 calculateRowTotal(row);
                 
                 logEdit('Points Table', `Row ${row.serial} - ${field}`, oldValue, newValue);
@@ -1568,6 +1672,7 @@
                 name: tournamentName,
                 date: document.getElementById('tableDate').value,
                 data: pointsTableData,
+                teams: teams, // Save teams with tournament
                 savedAt: new Date().toISOString(),
                 modifiedAt: new Date().toISOString()
             };
@@ -1613,6 +1718,7 @@
                 name: newName,
                 date: document.getElementById('tableDate').value,
                 data: JSON.parse(JSON.stringify(pointsTableData)),
+                teams: JSON.parse(JSON.stringify(teams)),
                 savedAt: new Date().toISOString(),
                 modifiedAt: new Date().toISOString()
             };
@@ -1645,9 +1751,18 @@
 
             pointsTableData = JSON.parse(JSON.stringify(tournament.data));
             
-            // Ensure all rows have numBoards set (backward compatibility)
+            // Load teams if saved with tournament
+            if (tournament.teams) {
+                teams = JSON.parse(JSON.stringify(tournament.teams));
+                saveTeams();
+            }
+            
+            // Ensure all rows have required fields (backward compatibility)
             pointsTableData.forEach(row => {
                 if (!row.numBoards) row.numBoards = 3;
+                if (!row.team1) row.team1 = row.player || '';
+                if (!row.team2) row.team2 = '';
+                if (!row.wonBy) row.wonBy = '';
             });
             
             currentTournamentId = tournament.id;
@@ -1658,6 +1773,7 @@
             saveCurrentState();
             renderTableHeader();
             renderPointsTable();
+            renderTeamsTable();
             updateStats();
             
             logEdit('Tournament', 'Loaded tournament', null, tournament.name);
@@ -1926,6 +2042,138 @@
             }, 3000);
         }
 
+        // Teams Management Functions
+        function addTeam() {
+            const name = prompt('Enter team name:');
+            if (!name) return;
+
+            if (teams.find(t => t.name === name)) {
+                showToast('Team already exists!', '❌');
+                return;
+            }
+
+            const color = defaultColors[teams.length % defaultColors.length];
+            teams.push({ name, color });
+            
+            saveTeams();
+            renderTeamsTable();
+            logEdit('Teams', 'Added team', null, name);
+            showToast('Team added!', '✅');
+        }
+
+        function deleteTeam(index) {
+            if (!confirm(`Delete team "${teams[index].name}"?`)) return;
+
+            const teamName = teams[index].name;
+            teams.splice(index, 1);
+            
+            saveTeams();
+            renderTeamsTable();
+            logEdit('Teams', 'Deleted team', teamName, 'Deleted');
+            showToast('Team deleted!', '✅');
+        }
+
+        function updateTeamName(index) {
+            const newName = prompt('Enter new team name:', teams[index].name);
+            if (!newName || newName === teams[index].name) return;
+
+            const oldName = teams[index].name;
+            teams[index].name = newName;
+            
+            // Update all matches with this team
+            pointsTableData.forEach(row => {
+                if (row.team1 === oldName) row.team1 = newName;
+                if (row.team2 === oldName) row.team2 = newName;
+                if (row.wonBy === oldName) row.wonBy = newName;
+            });
+            
+            saveTeams();
+            saveCurrentState();
+            renderTeamsTable();
+            renderPointsTable();
+            logEdit('Teams', 'Updated team name', oldName, newName);
+            showToast('Team updated!', '✅');
+        }
+
+        function updateTeamColor(index) {
+            const newColor = prompt('Enter color (hex code):', teams[index].color);
+            if (!newColor || newColor === teams[index].color) return;
+
+            teams[index].color = newColor;
+            
+            saveTeams();
+            renderTeamsTable();
+            renderPointsTable();
+            logEdit('Teams', `Updated ${teams[index].name} color`, null, newColor);
+            showToast('Color updated!', '✅');
+        }
+
+        function clearTeams() {
+            if (!confirm('Delete all teams? This will clear all matches!')) return;
+
+            teams = [];
+            pointsTableData = [];
+            
+            saveTeams();
+            saveCurrentState();
+            renderTeamsTable();
+            renderPointsTable();
+            logEdit('Teams', 'Cleared all teams', null, 'Empty');
+            showToast('All teams cleared!', '✅');
+        }
+
+        function renderTeamsTable() {
+            const tbody = document.getElementById('teamsTableBody');
+            tbody.innerHTML = '';
+
+            if (teams.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 40px; opacity: 0.6;">No teams yet. Add some teams to start!</td></tr>';
+                return;
+            }
+
+            teams.forEach((team, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="editable-cell" onclick="updateTeamName(${index})" style="font-weight: 700;">
+                        ${team.name}
+                    </td>
+                    <td class="editable-cell" onclick="updateTeamColor(${index})" style="font-family: monospace; font-weight: 600;">
+                        ${team.color}
+                    </td>
+                    <td>
+                        <div style="width: 80px; height: 40px; background: ${team.color}; border: 3px solid #333; border-radius: 8px;"></div>
+                    </td>
+                    <td>
+                        <button class="row-btn row-btn-delete" onclick="deleteTeam(${index})">🗑️ Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Helper Functions for Teams in Points Table
+        function updateTeam(rowIndex, field, value) {
+            pointsTableData[rowIndex][field] = value;
+            logEdit('Points Table', `Row ${pointsTableData[rowIndex].serial} - ${field}`, null, value);
+            saveCurrentState();
+            renderPointsTable();
+        }
+
+        function updateWonBy(rowIndex, value) {
+            pointsTableData[rowIndex].wonBy = value;
+            logEdit('Points Table', `Row ${pointsTableData[rowIndex].serial} - Won By`, null, value);
+            saveCurrentState();
+        }
+
+        function setBoardWinner(rowIndex, boardNum, winner) {
+            const row = pointsTableData[rowIndex];
+            row[`board${boardNum}_winner`] = winner;
+            logEdit('Points Table', `Row ${row.serial} - Board ${boardNum} winner`, null, winner);
+            saveCurrentState();
+            renderPointsTable();
+            showToast(`Board ${boardNum} won by ${winner}!`, '✅');
+        }
+
         // Storage Functions
         function saveCurrentState() {
             localStorage.setItem('carromCurrentTable', JSON.stringify(pointsTableData));
@@ -1944,6 +2192,10 @@
             localStorage.setItem('carromUserInfo', JSON.stringify(userInfo));
         }
 
+        function saveTeams() {
+            localStorage.setItem('carromTeams', JSON.stringify(teams));
+        }
+
         function loadAllData() {
             const savedTable = localStorage.getItem('carromCurrentTable');
             if (savedTable) {
@@ -1951,6 +2203,9 @@
                 // Ensure backward compatibility - add numBoards to old data
                 pointsTableData.forEach(row => {
                     if (!row.numBoards) row.numBoards = 3;
+                    if (!row.team1) row.team1 = row.player || '';
+                    if (!row.team2) row.team2 = '';
+                    if (!row.wonBy) row.wonBy = '';
                 });
             }
 
@@ -1965,6 +2220,8 @@
                     if (t.data) {
                         t.data.forEach(row => {
                             if (!row.numBoards) row.numBoards = 3;
+                            if (!row.team1) row.team1 = row.player || '';
+                            if (!row.team2) row.team2 = '';
                         });
                     }
                 });
@@ -1977,6 +2234,11 @@
             if (savedUserInfo) {
                 const loadedInfo = JSON.parse(savedUserInfo);
                 userInfo.mobile = loadedInfo.mobile || 'Not Set';
+            }
+
+            const savedTeams = localStorage.getItem('carromTeams');
+            if (savedTeams) {
+                teams = JSON.parse(savedTeams);
             }
         }
 
