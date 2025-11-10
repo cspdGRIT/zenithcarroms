@@ -481,6 +481,16 @@
             color: white;
         }
 
+        .row-btn-success {
+            background: linear-gradient(135deg, #228B22, #32CD32);
+            color: white;
+        }
+
+        .row-btn-warning {
+            background: linear-gradient(135deg, #FFA500, #FF8C00);
+            color: white;
+        }
+
         .stats-panel {
             background: linear-gradient(135deg, #FFF8DC, #FFE4B5);
             padding: 20px;
@@ -875,7 +885,7 @@
                 <div id="pointsTable" class="content-section">
                     <div class="section-header">
                         <h2>📊 Points Table</h2>
-                        <p>Ultra dynamic with smart controls</p>
+                        <p>Each row can have different boards • Queen is visual indicator only • Use ➕/➖ in Actions to manage boards per match</p>
                     </div>
 
                     <div style="background: linear-gradient(135deg, #FFF8DC, #FFE4B5); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 3px solid #FFD700;">
@@ -883,18 +893,6 @@
                             <label>🏆 Tournament Name:</label>
                             <input type="text" id="tournamentNameInput" placeholder="Enter tournament name (e.g., District Championship 2024)">
                         </div>
-                    </div>
-
-                    <!-- Board Controls -->
-                    <div class="board-controls">
-                        <span class="board-controls-label">📊 Boards:</span>
-                        <button class="btn btn-danger btn-circle" onclick="removeBoardColumn()" title="Remove Board">
-                            ➖
-                        </button>
-                        <div class="board-count" id="boardCount">3</div>
-                        <button class="btn btn-success btn-circle" onclick="addBoardColumn()" title="Add Board">
-                            ➕
-                        </button>
                     </div>
 
                     <!-- Main Controls -->
@@ -926,16 +924,12 @@
                             <div class="stat-label">Matches</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-value" id="statBoards">3</div>
-                            <div class="stat-label">Boards</div>
-                        </div>
-                        <div class="stat-item">
                             <div class="stat-value" id="statPlayers">0</div>
                             <div class="stat-label">Players</div>
                         </div>
                         <div class="stat-item">
                             <div class="stat-value" id="statQueens">0</div>
-                            <div class="stat-label">Queens</div>
+                            <div class="stat-label">Queens 👑</div>
                         </div>
                         <div class="stat-item">
                             <div class="stat-value" id="statTotalScore">0</div>
@@ -1067,7 +1061,6 @@
     <script>
         // Global State
         let pointsTableData = [];
-        let numBoards = 3;
         let editLog = [];
         let savedTournaments = [];
         let currentTournamentId = null;
@@ -1159,6 +1152,8 @@
             const totalMatches = pointsTableData.length;
             const totalQueens = countTotalQueens();
             const totalScore = calculateTotalScore();
+            const avgBoards = totalMatches > 0 ? 
+                (pointsTableData.reduce((sum, r) => sum + (r.numBoards || 3), 0) / totalMatches).toFixed(1) : 0;
 
             container.innerHTML = `
                 <div class="stat-item">
@@ -1170,8 +1165,8 @@
                     <div class="stat-label">Current Matches</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">${numBoards}</div>
-                    <div class="stat-label">Boards</div>
+                    <div class="stat-value">${avgBoards}</div>
+                    <div class="stat-label">Avg Boards/Match</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-value">${totalQueens}</div>
@@ -1187,74 +1182,60 @@
         // Render Table Header
         function renderTableHeader() {
             const thead = document.getElementById('tableHeader');
-            let headerHTML = '<tr>';
             
-            headerHTML += '<th rowspan="2">S</th>';
-            headerHTML += '<th rowspan="2">Break</th>';
-            headerHTML += '<th rowspan="2">Player</th>';
-            
-            for (let i = 1; i <= numBoards; i++) {
-                headerHTML += `<th colspan="2" class="board-header">Board ${i}</th>`;
-            }
-            
-            headerHTML += '<th rowspan="2">Total Score</th>';
-            headerHTML += '<th rowspan="2">Actions</th>';
-            headerHTML += '</tr><tr>';
-            
-            for (let i = 1; i <= numBoards; i++) {
-                headerHTML += '<th class="sub-header">Queen</th>';
-                headerHTML += '<th class="sub-header">Pts</th>';
-            }
-            
-            headerHTML += '</tr>';
-            thead.innerHTML = headerHTML;
+            thead.innerHTML = `
+                <tr>
+                    <th>S</th>
+                    <th>Break</th>
+                    <th>Player</th>
+                    <th colspan="20" class="board-header">Dynamic Boards (Each row can have different number of boards - use ➕/➖ in Actions)</th>
+                    <th>Total Score</th>
+                    <th>Actions</th>
+                </tr>
+            `;
         }
 
-        // Add Board Column
-        function addBoardColumn() {
-            numBoards++;
+        // Add Board to Specific Row
+        function addBoardToRow(rowIndex) {
+            const row = pointsTableData[rowIndex];
+            if (!row.numBoards) row.numBoards = 3; // Default if not set
             
-            pointsTableData.forEach(row => {
-                row[`board${numBoards}_q`] = false;
-                row[`board${numBoards}_pts`] = 0;
-            });
+            row.numBoards++;
+            row[`board${row.numBoards}_q`] = false;
+            row[`board${row.numBoards}_pts`] = 0;
             
-            document.getElementById('boardCount').textContent = numBoards;
-            
-            logEdit('Points Table', `Added Board ${numBoards}`, null, `Board ${numBoards} column added`);
+            calculateRowTotal(row);
+            logEdit('Points Table', `Row ${row.serial} - Added Board ${row.numBoards}`, null, `Board ${row.numBoards}`);
             saveCurrentState();
-            renderTableHeader();
             renderPointsTable();
             updateStats();
-            showToast(`Board ${numBoards} added!`, '✅');
+            showToast(`Board ${row.numBoards} added to row ${row.serial}!`, '✅');
         }
 
-        // Remove Board Column
-        function removeBoardColumn() {
-            if (numBoards <= 1) {
+        // Remove Board from Specific Row
+        function removeBoardFromRow(rowIndex) {
+            const row = pointsTableData[rowIndex];
+            if (!row.numBoards) row.numBoards = 3;
+            
+            if (row.numBoards <= 1) {
                 showToast('Cannot remove! Minimum 1 board required.', '❌');
                 return;
             }
 
-            if (!confirm(`Remove Board ${numBoards}? All data in this column will be lost!`)) {
+            if (!confirm(`Remove Board ${row.numBoards} from this match?`)) {
                 return;
             }
 
-            pointsTableData.forEach(row => {
-                delete row[`board${numBoards}_q`];
-                delete row[`board${numBoards}_pts`];
-                calculateRowTotal(row);
-            });
-
-            logEdit('Points Table', `Removed Board ${numBoards}`, `Board ${numBoards}`, 'Deleted');
-            numBoards--;
-            document.getElementById('boardCount').textContent = numBoards;
+            delete row[`board${row.numBoards}_q`];
+            delete row[`board${row.numBoards}_pts`];
+            row.numBoards--;
             
+            calculateRowTotal(row);
+            logEdit('Points Table', `Row ${row.serial} - Removed Board`, `Board ${row.numBoards + 1}`, 'Deleted');
             saveCurrentState();
-            renderTableHeader();
             renderPointsTable();
             updateStats();
-            showToast(`Board removed!`, '✅');
+            showToast(`Board removed from row ${row.serial}!`, '✅');
         }
 
         // Add Match Row
@@ -1263,10 +1244,11 @@
                 id: Date.now(),
                 serial: pointsTableData.length + 1,
                 break: false,
-                player: ''
+                player: '',
+                numBoards: 3 // Default 3 boards per row
             };
 
-            for (let i = 1; i <= numBoards; i++) {
+            for (let i = 1; i <= row.numBoards; i++) {
                 row[`board${i}_q`] = false;
                 row[`board${i}_pts`] = 0;
             }
@@ -1364,6 +1346,7 @@
             duplicate.id = Date.now();
             duplicate.serial = pointsTableData.length + 1;
             duplicate.player = original.player + ' (Copy)';
+            duplicate.numBoards = original.numBoards || 3; // Preserve board count
 
             pointsTableData.push(duplicate);
             
@@ -1381,6 +1364,7 @@
 
             pointsTableData.forEach((row, index) => {
                 const tr = document.createElement('tr');
+                const rowBoards = row.numBoards || 3;
                 
                 tr.innerHTML = `<td class="serial-col">${row.serial}</td>`;
                 
@@ -1399,7 +1383,8 @@
                     </td>
                 `;
                 
-                for (let i = 1; i <= numBoards; i++) {
+                // Dynamic boards per row
+                for (let i = 1; i <= rowBoards; i++) {
                     tr.innerHTML += `
                         <td onclick="toggleQueen(${index}, 'board${i}_q')">
                             <span class="queen-box ${row[`board${i}_q`] ? 'checked' : ''}">
@@ -1427,6 +1412,8 @@
                             <button class="row-btn row-btn-up" onclick="moveRowUp(${index})" title="Move Up">⬆️</button>
                             <button class="row-btn row-btn-down" onclick="moveRowDown(${index})" title="Move Down">⬇️</button>
                             <button class="row-btn row-btn-duplicate" onclick="duplicateRow(${index})" title="Duplicate">📋</button>
+                            <button class="row-btn row-btn-success" onclick="addBoardToRow(${index})" title="Add Board">➕</button>
+                            <button class="row-btn row-btn-warning" onclick="removeBoardFromRow(${index})" title="Remove Board">➖</button>
                             <button class="row-btn row-btn-delete" onclick="deleteRow(${index})" title="Delete">🗑️</button>
                         </div>
                     </td>
@@ -1478,12 +1465,14 @@
             updateStats();
         }
 
-        // Calculate Row Total
+        // Calculate Row Total - Queen is just visual indicator, NOT worth points!
         function calculateRowTotal(row) {
             let total = 0;
+            const rowBoards = row.numBoards || 3;
             
-            for (let i = 1; i <= numBoards; i++) {
-                total += (row[`board${i}_q`] ? 5 : 0) + (parseFloat(row[`board${i}_pts`]) || 0);
+            // Only sum the Pts columns - Queen is just a visual indicator
+            for (let i = 1; i <= rowBoards; i++) {
+                total += parseFloat(row[`board${i}_pts`]) || 0;
             }
             
             row.totalScore = total;
@@ -1497,7 +1486,6 @@
             const totalScore = calculateTotalScore();
 
             document.getElementById('statMatches').textContent = totalMatches;
-            document.getElementById('statBoards').textContent = numBoards;
             document.getElementById('statPlayers').textContent = totalPlayers;
             document.getElementById('statQueens').textContent = totalQueens;
             document.getElementById('statTotalScore').textContent = totalScore;
@@ -1506,7 +1494,8 @@
         function countTotalQueens() {
             let count = 0;
             pointsTableData.forEach(row => {
-                for (let i = 1; i <= numBoards; i++) {
+                const rowBoards = row.numBoards || 3;
+                for (let i = 1; i <= rowBoards; i++) {
                     if (row[`board${i}_q`]) count++;
                 }
             });
@@ -1555,7 +1544,6 @@
                 id: currentTournamentId || Date.now(),
                 name: tournamentName,
                 date: document.getElementById('tableDate').value,
-                numBoards: numBoards,
                 data: pointsTableData,
                 savedAt: new Date().toISOString(),
                 modifiedAt: new Date().toISOString()
@@ -1601,7 +1589,6 @@
                 id: Date.now(),
                 name: newName,
                 date: document.getElementById('tableDate').value,
-                numBoards: numBoards,
                 data: JSON.parse(JSON.stringify(pointsTableData)),
                 savedAt: new Date().toISOString(),
                 modifiedAt: new Date().toISOString()
@@ -1634,12 +1621,16 @@
             }
 
             pointsTableData = JSON.parse(JSON.stringify(tournament.data));
-            numBoards = tournament.numBoards;
+            
+            // Ensure all rows have numBoards set (backward compatibility)
+            pointsTableData.forEach(row => {
+                if (!row.numBoards) row.numBoards = 3;
+            });
+            
             currentTournamentId = tournament.id;
 
             document.getElementById('tournamentNameInput').value = tournament.name;
             document.getElementById('tableDate').value = tournament.date;
-            document.getElementById('boardCount').textContent = numBoards;
 
             saveCurrentState();
             renderTableHeader();
@@ -1758,6 +1749,8 @@
                 
                 const savedDate = new Date(tournament.savedAt);
                 const matchCount = tournament.data.length;
+                const avgBoards = matchCount > 0 ? 
+                    (tournament.data.reduce((sum, r) => sum + (r.numBoards || 3), 0) / matchCount).toFixed(1) : 0;
                 
                 card.innerHTML = `
                     <h3>${tournament.name}</h3>
@@ -1771,8 +1764,8 @@
                             ${matchCount}
                         </div>
                         <div class="tournament-info-item">
-                            <strong>📊 Boards:</strong>
-                            ${tournament.numBoards}
+                            <strong>📊 Avg Boards:</strong>
+                            ${avgBoards}
                         </div>
                         <div class="tournament-info-item">
                             <strong>💾 Saved:</strong>
@@ -1913,7 +1906,6 @@
         // Storage Functions
         function saveCurrentState() {
             localStorage.setItem('carromCurrentTable', JSON.stringify(pointsTableData));
-            localStorage.setItem('carromNumBoards', numBoards.toString());
             localStorage.setItem('carromCurrentTournamentId', currentTournamentId?.toString() || '');
         }
 
@@ -1931,16 +1923,29 @@
 
         function loadAllData() {
             const savedTable = localStorage.getItem('carromCurrentTable');
-            if (savedTable) pointsTableData = JSON.parse(savedTable);
-
-            const savedBoards = localStorage.getItem('carromNumBoards');
-            if (savedBoards) numBoards = parseInt(savedBoards);
+            if (savedTable) {
+                pointsTableData = JSON.parse(savedTable);
+                // Ensure backward compatibility - add numBoards to old data
+                pointsTableData.forEach(row => {
+                    if (!row.numBoards) row.numBoards = 3;
+                });
+            }
 
             const savedCurrentId = localStorage.getItem('carromCurrentTournamentId');
             if (savedCurrentId) currentTournamentId = parseInt(savedCurrentId) || null;
 
             const savedTournamentsData = localStorage.getItem('carromSavedTournaments');
-            if (savedTournamentsData) savedTournaments = JSON.parse(savedTournamentsData);
+            if (savedTournamentsData) {
+                savedTournaments = JSON.parse(savedTournamentsData);
+                // Ensure backward compatibility for tournaments
+                savedTournaments.forEach(t => {
+                    if (t.data) {
+                        t.data.forEach(row => {
+                            if (!row.numBoards) row.numBoards = 3;
+                        });
+                    }
+                });
+            }
 
             const savedLog = localStorage.getItem('carromEditLog');
             if (savedLog) editLog = JSON.parse(savedLog);
