@@ -2,8 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎯 Carroms 🎯</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Carrom Manager">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="manifest.json">
+    <title>🎯 Carroms@Zenith 2025 🎯</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Playfair+Display:wght@700;900&display=swap');
 
@@ -20,6 +26,10 @@
             animation: gradientShift 20s ease infinite;
             min-height: 100vh;
             padding: 20px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
 
         @keyframes gradientShift {
@@ -788,21 +798,271 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
             .header h1 {
                 font-size: 2em;
             }
 
+            .header p {
+                font-size: 1em;
+            }
+
+            .main-layout {
+                gap: 15px;
+            }
+
+            .sidebar {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 10px;
+                padding: 15px;
+            }
+
+            .sidebar h3 {
+                grid-column: 1 / -1;
+            }
+
+            .nav-item {
+                padding: 12px 10px;
+                font-size: 0.85em;
+                justify-content: center;
+                text-align: center;
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .nav-item .icon {
+                font-size: 1.8em;
+            }
+
+            .content-area {
+                padding: 20px 15px;
+            }
+
+            .section-header h2 {
+                font-size: 1.8em;
+            }
+
+            .section-header p {
+                font-size: 0.9em;
+            }
+
             .table-controls {
                 flex-direction: column;
+                gap: 10px;
             }
 
             .btn:not(.btn-circle) {
                 width: 100%;
                 justify-content: center;
+                padding: 16px 24px;
+                font-size: 18px;
             }
 
-            .board-controls {
+            .table-wrapper {
+                border-radius: 12px;
+                margin: 0 -15px;
+                width: calc(100% + 30px);
+            }
+
+            .points-table {
+                font-size: 13px;
+            }
+
+            .points-table th {
+                padding: 12px 6px;
+                font-size: 0.75em;
+                letter-spacing: 0.5px;
+            }
+
+            .points-table td {
+                padding: 10px 6px;
+            }
+
+            .serial-col {
+                font-size: 1em;
+            }
+
+            /* Make cells bigger for touch */
+            .editable-cell {
+                min-height: 44px;
+                display: flex;
+                align-items: center;
                 justify-content: center;
+                font-size: 1.1em;
+            }
+
+            .queen-box {
+                font-size: 2em;
+            }
+
+            /* Larger touch targets for toggles */
+            td[onclick*="toggle"] {
+                min-height: 50px;
+                min-width: 50px;
+            }
+
+            /* Teams column mobile */
+            td[style*="min-width: 150px"] {
+                min-width: 120px !important;
+            }
+
+            td[style*="min-width: 150px"] select {
+                font-size: 0.85em;
+                padding: 6px 4px;
+            }
+
+            /* Scores column mobile */
+            td[colspan="2"] > div > div {
+                font-size: 1.3em !important;
+                padding: 10px !important;
+            }
+
+            /* Actions column mobile */
+            .action-col {
+                min-width: auto !important;
+            }
+
+            .row-actions {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .row-btn {
+                width: 100%;
+                padding: 10px;
+                font-size: 1em;
+            }
+
+            /* Stats panel mobile */
+            .stats-panel {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                padding: 15px;
+            }
+
+            .stat-value {
+                font-size: 2em;
+            }
+
+            .stat-label {
+                font-size: 0.75em;
+            }
+
+            /* User info mobile */
+            .user-info-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            /* Forms mobile */
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                font-size: 16px !important; /* Prevents zoom on iOS */
+                padding: 16px;
+            }
+
+            /* Modals mobile */
+            .modal-content {
+                width: 95%;
+                padding: 25px;
+                margin: 20px;
+            }
+
+            /* Tournament cards mobile */
+            .tournament-card {
+                padding: 15px;
+            }
+
+            .tournament-info {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .tournament-actions {
+                flex-direction: column;
+            }
+
+            /* Toast mobile */
+            .toast {
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                font-size: 0.9em;
+            }
+
+            /* Teams table mobile */
+            .points-table tbody tr {
+                display: block;
+                margin-bottom: 15px;
+                border: 2px solid #e2e8f0;
+                border-radius: 12px;
+                overflow: hidden;
+            }
+
+            .points-table tbody td {
+                display: block;
+                text-align: left;
+                padding: 12px 15px;
+                border: none;
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+            .points-table tbody td:last-child {
+                border-bottom: none;
+            }
+
+            .points-table tbody td::before {
+                content: attr(data-label);
+                font-weight: 700;
+                display: inline-block;
+                width: 100px;
+                color: #667eea;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 25px 15px;
+            }
+
+            .header h1 {
+                font-size: 1.6em;
+            }
+
+            .points-table {
+                font-size: 11px;
+            }
+
+            .btn {
+                font-size: 16px;
+            }
+
+            .stats-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Touch-friendly enhancements */
+        @media (hover: none) and (pointer: coarse) {
+            .btn {
+                min-height: 48px;
+            }
+
+            .nav-item {
+                min-height: 48px;
+            }
+
+            .editable-cell {
+                min-height: 48px;
+            }
+
+            input, select, textarea {
+                min-height: 48px;
             }
         }
     </style>
@@ -810,8 +1070,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎯 CARROMS 🎯</h1>
-            <p>Zenith Carrom Tournament - 2025</p>
+            <h1>🎯 ULTIMATE CARROM MANAGER</h1>
+            <p>Professional Tournament Management - Ultra Dynamic Edition</p>
         </div>
 
         <div class="main-layout">
