@@ -296,15 +296,84 @@
             font-size: 0.9em;
         }
 
-        .board-controls {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            padding: 15px;
-            background: linear-gradient(135deg, #FFF8DC, #FFE4B5);
-            border-radius: 12px;
-            margin-bottom: 20px;
-            border: 3px solid #FFD700;
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+            background: white;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
+
+        .points-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 15px;
+        }
+
+        .points-table thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .points-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .points-table th.board-header {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+        }
+
+        .points-table th.sub-header {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            font-size: 0.85em;
+            padding: 10px 8px;
+        }
+
+        .points-table td {
+            padding: 12px 10px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            background: white;
+            transition: all 0.3s;
+        }
+
+        .points-table tr:hover td {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+        }
+
+        .editable-cell {
+            cursor: pointer;
+            position: relative;
+            min-height: 35px;
+            font-weight: 600;
+        }
+
+        .editable-cell:hover {
+            background: linear-gradient(135deg, #ffeaa7, #fdcb6e) !important;
+            outline: 3px solid #f093fb;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(240, 147, 251, 0.4);
+        }
+
+        .serial-col {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)) !important;
+            font-weight: 900;
+            color: #667eea;
+            font-size: 1.1em;
         }
 
         .board-controls-label {
@@ -862,79 +931,160 @@
                 font-size: 18px;
             }
 
+            /* CRITICAL TABLE FIXES FOR MOBILE */
             .table-wrapper {
-                border-radius: 12px;
+                border-radius: 0;
                 margin: 0 -15px;
                 width: calc(100% + 30px);
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                position: relative;
+            }
+
+            .table-wrapper::before {
+                content: '👉 Swipe to see more →';
+                position: sticky;
+                left: 0;
+                display: block;
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                color: white;
+                padding: 10px 15px;
+                font-size: 0.9em;
+                font-weight: 700;
+                text-align: center;
+                z-index: 5;
+                border-bottom: 2px solid rgba(255,255,255,0.3);
             }
 
             .points-table {
                 font-size: 13px;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                width: max-content;
+                min-width: 100%;
+            }
+
+            .points-table thead,
+            .points-table tbody,
+            .points-table tr {
+                display: table;
+                width: 100%;
+                table-layout: auto;
             }
 
             .points-table th {
-                padding: 12px 6px;
+                padding: 12px 8px;
                 font-size: 0.75em;
                 letter-spacing: 0.5px;
+                white-space: nowrap;
+                min-width: 50px;
             }
 
             .points-table td {
-                padding: 10px 6px;
+                padding: 14px 10px;
+                white-space: nowrap;
+                min-width: 50px;
+                min-height: 48px;
+            }
+
+            /* First column sticky */
+            .points-table th:first-child,
+            .points-table td:first-child {
+                position: sticky;
+                left: 0;
+                z-index: 3;
+                background: white;
+                box-shadow: 3px 0 8px rgba(0, 0, 0, 0.15);
+            }
+
+            .points-table th:first-child {
+                z-index: 12;
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                box-shadow: 3px 0 8px rgba(0, 0, 0, 0.2);
             }
 
             .serial-col {
                 font-size: 1em;
+                min-width: 40px !important;
             }
 
             /* Make cells bigger for touch */
             .editable-cell {
-                min-height: 44px;
-                display: flex;
+                min-height: 48px;
+                display: inline-flex;
                 align-items: center;
                 justify-content: center;
                 font-size: 1.1em;
+                min-width: 60px;
+                padding: 14px 12px;
             }
 
             .queen-box {
                 font-size: 2em;
+                display: inline-block;
             }
 
             /* Larger touch targets for toggles */
             td[onclick*="toggle"] {
-                min-height: 50px;
-                min-width: 50px;
+                min-height: 52px;
+                min-width: 52px;
+                cursor: pointer;
             }
 
             /* Teams column mobile */
             td[style*="min-width: 150px"] {
-                min-width: 120px !important;
+                min-width: 130px !important;
+                max-width: 160px !important;
             }
 
             td[style*="min-width: 150px"] select {
                 font-size: 0.85em;
-                padding: 6px 4px;
+                padding: 8px 6px;
+                width: 100%;
+                max-width: 150px;
             }
 
-            /* Scores column mobile */
+            /* Scores column mobile - bigger and clearer */
+            td[colspan="2"] > div {
+                gap: 6px !important;
+            }
+
             td[colspan="2"] > div > div {
-                font-size: 1.3em !important;
-                padding: 10px !important;
+                font-size: 1.5em !important;
+                padding: 12px 10px !important;
+                min-width: 80px;
+            }
+
+            /* Won By dropdown - bigger touch target */
+            td > select {
+                font-size: 0.95em !important;
+                padding: 12px 10px !important;
+                min-height: 48px;
+                min-width: 100px;
             }
 
             /* Actions column mobile */
             .action-col {
-                min-width: auto !important;
+                min-width: 110px !important;
             }
 
             .row-actions {
-                flex-direction: column;
-                gap: 5px;
+                display: grid !important;
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+                padding: 6px;
             }
 
             .row-btn {
-                width: 100%;
-                padding: 10px;
-                font-size: 1em;
+                width: 100% !important;
+                padding: 12px 8px !important;
+                font-size: 0.85em !important;
+                min-height: 44px;
+                white-space: nowrap;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             /* Stats panel mobile */
@@ -942,6 +1092,9 @@
                 grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
                 padding: 15px;
+                margin: 0 -15px 20px -15px;
+                width: calc(100% + 30px);
+                border-radius: 0;
             }
 
             .stat-value {
@@ -962,7 +1115,7 @@
             .form-group input,
             .form-group select,
             .form-group textarea {
-                font-size: 16px !important; /* Prevents zoom on iOS */
+                font-size: 16px !important;
                 padding: 16px;
             }
 
@@ -993,35 +1146,6 @@
                 right: 10px;
                 left: 10px;
                 font-size: 0.9em;
-            }
-
-            /* Teams table mobile */
-            .points-table tbody tr {
-                display: block;
-                margin-bottom: 15px;
-                border: 2px solid #e2e8f0;
-                border-radius: 12px;
-                overflow: hidden;
-            }
-
-            .points-table tbody td {
-                display: block;
-                text-align: left;
-                padding: 12px 15px;
-                border: none;
-                border-bottom: 1px solid #e2e8f0;
-            }
-
-            .points-table tbody td:last-child {
-                border-bottom: none;
-            }
-
-            .points-table tbody td::before {
-                content: attr(data-label);
-                font-weight: 700;
-                display: inline-block;
-                width: 100px;
-                color: #667eea;
             }
         }
 
@@ -1070,8 +1194,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎯 Carroms@Zenith 2025 🎯</h1>
-            <p>Tournament Manager</p>
+            <h1>🎯 Carroms@Zenith 2025</h1>
+            <p>Professional Tournament Management 🎯</p>
         </div>
 
         <div class="main-layout">
@@ -2640,6 +2764,43 @@
                 saveCurrentState();
             }
         }, 30000);
+
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(function(registration) {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(function(err) {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+
+        // Prompt to install PWA
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Show install button/prompt after 10 seconds
+            setTimeout(() => {
+                if (deferredPrompt && !localStorage.getItem('pwaInstalled')) {
+                    if (confirm('📱 Install Carrom Manager as an app on your device for easier access?')) {
+                        deferredPrompt.prompt();
+                        deferredPrompt.userChoice.then((choiceResult) => {
+                            if (choiceResult.outcome === 'accepted') {
+                                localStorage.setItem('pwaInstalled', 'true');
+                            }
+                            deferredPrompt = null;
+                        });
+                    } else {
+                        localStorage.setItem('pwaInstalled', 'dismissed');
+                    }
+                }
+            }, 10000);
+        });
     </script>
 </body>
 </html>
