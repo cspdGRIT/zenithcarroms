@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎯 Ultimate Carrom Manager - Ultra Dynamic Edition</title>
+    <title>🎯 Carroms 🎯</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Playfair+Display:wght@700;900&display=swap');
 
         * {
             margin: 0;
@@ -14,12 +14,12 @@
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #2C1810 0%, #5C4033 50%, #8B6F47 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
             background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
+            animation: gradientShift 20s ease infinite;
             min-height: 100vh;
-            padding: 15px;
+            padding: 20px;
         }
 
         @keyframes gradientShift {
@@ -33,13 +33,13 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #654321, #8B4513, #A0522D);
-            border-radius: 25px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 20px;
             padding: 40px;
             text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             margin-bottom: 25px;
-            border: 4px solid #D2691E;
+            border: 3px solid rgba(255, 255, 255, 0.2);
             position: relative;
             overflow: hidden;
         }
@@ -51,8 +51,8 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.1), transparent);
-            animation: shine 3s infinite;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shine 4s infinite;
         }
 
         @keyframes shine {
@@ -61,20 +61,23 @@
         }
 
         .header h1 {
+            font-family: 'Playfair Display', serif;
             font-size: 3.5em;
-            background: linear-gradient(135deg, #FFD700, #FFA500, #FFD700);
+            background: linear-gradient(135deg, #fff, #ffd89b, #fff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
+            text-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
             margin-bottom: 10px;
             font-weight: 900;
             position: relative;
+            letter-spacing: -1px;
         }
 
         .header p {
-            color: #FFE4B5;
+            color: rgba(255, 255, 255, 0.95);
             font-size: 1.3em;
-            font-weight: 600;
+            font-weight: 500;
+            letter-spacing: 1px;
         }
 
         .main-layout {
@@ -84,20 +87,20 @@
         }
 
         .sidebar {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 248, 220, 0.95));
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.95));
             border-radius: 20px;
             padding: 25px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
             height: fit-content;
             position: sticky;
             top: 15px;
-            border: 3px solid #D2691E;
+            border: 2px solid rgba(102, 126, 234, 0.2);
         }
 
         .sidebar h3 {
-            font-size: 0.9em;
+            font-size: 0.85em;
             text-transform: uppercase;
-            color: #654321;
+            color: #667eea;
             margin-bottom: 15px;
             font-weight: 900;
             letter-spacing: 2px;
@@ -108,12 +111,12 @@
             border-radius: 12px;
             cursor: pointer;
             margin-bottom: 10px;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: flex;
             align-items: center;
             gap: 12px;
-            font-weight: 700;
-            color: #654321;
+            font-weight: 600;
+            color: #4a5568;
             position: relative;
             overflow: hidden;
         }
@@ -123,16 +126,16 @@
             position: absolute;
             left: 0;
             top: 0;
-            width: 5px;
+            width: 4px;
             height: 100%;
-            background: linear-gradient(135deg, #FFD700, #FFA500);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             transform: scaleY(0);
             transition: transform 0.3s;
         }
 
         .nav-item:hover {
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
-            transform: translateX(8px);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            transform: translateX(5px);
         }
 
         .nav-item:hover::before {
@@ -140,23 +143,23 @@
         }
 
         .nav-item.active {
-            background: linear-gradient(135deg, #654321, #8B4513);
-            color: #FFD700;
-            box-shadow: 0 10px 30px rgba(139, 69, 19, 0.4);
-            transform: translateX(8px) scale(1.02);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            transform: translateX(5px) scale(1.02);
         }
 
         .nav-item .icon {
-            font-size: 1.5em;
+            font-size: 1.4em;
         }
 
         .content-area {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 248, 220, 0.98));
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.96));
             border-radius: 20px;
             padding: 35px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
             min-height: 700px;
-            border: 3px solid #D2691E;
+            border: 2px solid rgba(102, 126, 234, 0.2);
         }
 
         .content-section {
@@ -176,17 +179,19 @@
         .section-header {
             margin-bottom: 30px;
             padding-bottom: 20px;
-            border-bottom: 4px solid;
-            border-image: linear-gradient(90deg, #FFD700, #FFA500, transparent) 1;
+            border-bottom: 3px solid;
+            border-image: linear-gradient(90deg, #667eea, #764ba2, transparent) 1;
         }
 
         .section-header h2 {
+            font-family: 'Playfair Display', serif;
             font-size: 2.8em;
-            background: linear-gradient(135deg, #654321, #8B4513);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 8px;
             font-weight: 900;
+            letter-spacing: -1px;
         }
 
         .table-controls {
@@ -202,14 +207,14 @@
             border: none;
             border-radius: 12px;
             font-size: 16px;
-            font-weight: 800;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            font-family: 'Poppins', sans-serif;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
             position: relative;
             overflow: hidden;
         }
@@ -234,7 +239,7 @@
 
         .btn:hover {
             transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
         }
 
         .btn:active {
@@ -242,28 +247,29 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #654321, #8B4513);
-            color: #FFD700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
         }
 
         .btn-success {
-            background: linear-gradient(135deg, #228B22, #32CD32);
+            background: linear-gradient(135deg, #56ab2f, #a8e063);
             color: white;
         }
 
         .btn-danger {
-            background: linear-gradient(135deg, #DC143C, #FF6347);
+            background: linear-gradient(135deg, #f093fb, #f5576c);
             color: white;
         }
 
         .btn-info {
-            background: linear-gradient(135deg, #1E90FF, #4169E1);
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
             color: white;
         }
 
         .btn-warning {
-            background: linear-gradient(135deg, #FFA500, #FF8C00);
-            color: white;
+            background: linear-gradient(135deg, #f093fb, #ffd89b);
+            color: #333;
+            font-weight: 800;
         }
 
         .btn-circle {
@@ -890,7 +896,7 @@
                 <div id="pointsTable" class="content-section">
                     <div class="section-header">
                         <h2>📊 Points Table</h2>
-                        <p>Per-team scoring • Break & Queen per board (colored) • First to 25 wins • Separate team scores</p>
+                        <p>Single break per match • Queen per board (colored) • First to 25 wins • Click to toggle Break & Queen</p>
                     </div>
 
                     <div style="background: linear-gradient(135deg, #FFF8DC, #FFE4B5); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 3px solid #FFD700;">
@@ -1244,7 +1250,6 @@
             
             row.numBoards++;
             row[`board${row.numBoards}_q_team`] = '';
-            row[`board${row.numBoards}_break_team`] = '';
             row[`board${row.numBoards}_team1_pts`] = 0;
             row[`board${row.numBoards}_team2_pts`] = 0;
             
@@ -1271,7 +1276,6 @@
             }
 
             delete row[`board${row.numBoards}_q_team`];
-            delete row[`board${row.numBoards}_break_team`];
             delete row[`board${row.numBoards}_team1_pts`];
             delete row[`board${row.numBoards}_team2_pts`];
             row.numBoards--;
@@ -1295,6 +1299,7 @@
             const row = {
                 id: Date.now(),
                 serial: pointsTableData.length + 1,
+                break: '', // Single break for entire match (team name)
                 team1: teams[0]?.name || '',
                 team2: teams[1]?.name || '',
                 team1_score: 0, // Separate score for team1
@@ -1305,7 +1310,6 @@
 
             for (let i = 1; i <= row.numBoards; i++) {
                 row[`board${i}_q_team`] = ''; // Queen pocketed by which team
-                row[`board${i}_break_team`] = ''; // Break by which team
                 row[`board${i}_team1_pts`] = 0;
                 row[`board${i}_team2_pts`] = 0;
             }
@@ -1427,15 +1431,14 @@
             
             // Create dynamic header
             let headerHTML = '<tr>';
-            headerHTML += '<th rowspan="2">S</th><th rowspan="2">Teams</th>';
+            headerHTML += '<th rowspan="2">S</th><th rowspan="2">Teams</th><th rowspan="2">Break</th>';
             for (let i = 1; i <= maxBoards; i++) {
-                headerHTML += `<th colspan="4" class="board-header">B${i}</th>`;
+                headerHTML += `<th colspan="3" class="board-header">B${i}</th>`;
             }
             headerHTML += '<th colspan="2" rowspan="2">Scores</th><th rowspan="2">Won By</th><th rowspan="2">Actions</th></tr>';
             
             headerHTML += '<tr>';
             for (let i = 1; i <= maxBoards; i++) {
-                headerHTML += '<th class="sub-header">Brk</th>';
                 headerHTML += '<th class="sub-header">Q</th>';
                 headerHTML += '<th class="sub-header">T1</th>';
                 headerHTML += '<th class="sub-header">T2</th>';
@@ -1462,42 +1465,41 @@
                 tr.innerHTML += `
                     <td style="min-width: 150px;">
                         <div style="margin-bottom: 5px;">
-                            <span style="display: inline-block; width: 15px; height: 15px; background: ${team1Color}; border: 2px solid #333; margin-right: 5px;"></span>
-                            <select onchange="updateTeam(${index}, 'team1', this.value)" style="width: 100%; padding: 4px; font-size: 0.9em; font-weight: 600;">
+                            <span style="display: inline-block; width: 15px; height: 15px; background: ${team1Color}; border: 2px solid #333; margin-right: 5px; border-radius: 3px;"></span>
+                            <select onchange="updateTeam(${index}, 'team1', this.value)" style="width: calc(100% - 25px); padding: 4px; font-size: 0.9em; font-weight: 600; border-radius: 6px;">
                                 ${teams.map(t => `<option value="${t.name}" ${row.team1 === t.name ? 'selected' : ''}>${t.name}</option>`).join('')}
                             </select>
                         </div>
                         <div>
-                            <span style="display: inline-block; width: 15px; height: 15px; background: ${team2Color}; border: 2px solid #333; margin-right: 5px;"></span>
-                            <select onchange="updateTeam(${index}, 'team2', this.value)" style="width: 100%; padding: 4px; font-size: 0.9em; font-weight: 600;">
+                            <span style="display: inline-block; width: 15px; height: 15px; background: ${team2Color}; border: 2px solid #333; margin-right: 5px; border-radius: 3px;"></span>
+                            <select onchange="updateTeam(${index}, 'team2', this.value)" style="width: calc(100% - 25px); padding: 4px; font-size: 0.9em; font-weight: 600; border-radius: 6px;">
                                 ${teams.map(t => `<option value="${t.name}" ${row.team2 === t.name ? 'selected' : ''}>${t.name}</option>`).join('')}
                             </select>
                         </div>
                     </td>
                 `;
                 
+                // Break column (single for entire match)
+                const breakColor = row.break === row.team1 ? team1Color : 
+                                  row.break === row.team2 ? team2Color : 'white';
+                tr.innerHTML += `
+                    <td onclick="toggleMatchBreak(${index})" style="background: ${breakColor}; cursor: pointer; text-align: center;" title="Click to toggle break">
+                        <span style="font-size: 1.5em; font-weight: 900;">
+                            ${row.break ? '🎯' : '○'}
+                        </span>
+                    </td>
+                `;
+                
                 // Dynamic boards per row
                 for (let i = 1; i <= maxBoards; i++) {
                     if (i <= rowBoards) {
-                        const breakTeam = row[`board${i}_break_team`] || '';
                         const qTeam = row[`board${i}_q_team`] || '';
-                        const breakColor = breakTeam === row.team1 ? team1Color : 
-                                          breakTeam === row.team2 ? team2Color : 'white';
                         const qColor = qTeam === row.team1 ? team1Color : 
                                       qTeam === row.team2 ? team2Color : 'white';
                         
-                        // Break column with color
-                        tr.innerHTML += `
-                            <td onclick="toggleBoardTeam(${index}, ${i}, 'break')" style="background: ${breakColor}; cursor: pointer;" title="Click to toggle break">
-                                <span style="font-size: 1.2em; font-weight: 900;">
-                                    ${breakTeam ? '🎯' : '○'}
-                                </span>
-                            </td>
-                        `;
-                        
                         // Queen column with color
                         tr.innerHTML += `
-                            <td onclick="toggleBoardTeam(${index}, ${i}, 'q')" style="background: ${qColor}; cursor: pointer;" title="Click to toggle queen">
+                            <td onclick="toggleBoardTeam(${index}, ${i}, 'q')" style="background: ${qColor}; cursor: pointer; text-align: center;" title="Click to toggle queen">
                                 <span class="queen-box ${qTeam ? 'checked' : ''}">
                                     ${qTeam ? '👑' : '☐'}
                                 </span>
@@ -1518,7 +1520,7 @@
                             </td>
                         `;
                     } else {
-                        tr.innerHTML += `<td style="background: #f5f5f5;"></td><td style="background: #f5f5f5;"></td><td style="background: #f5f5f5;"></td><td style="background: #f5f5f5;"></td>`;
+                        tr.innerHTML += `<td style="background: #f5f5f5;"></td><td style="background: #f5f5f5;"></td><td style="background: #f5f5f5;"></td>`;
                     }
                 }
                 
@@ -1526,10 +1528,10 @@
                 tr.innerHTML += `
                     <td colspan="2">
                         <div style="display: flex; flex-direction: column; gap: 5px;">
-                            <div style="background: ${team1Color}; color: white; padding: 5px; border-radius: 5px; font-weight: 900; font-size: 1.2em; ${row.team1_score >= 25 ? 'border: 3px solid #FFD700;' : ''}">
+                            <div style="background: ${team1Color}; color: white; padding: 8px; border-radius: 8px; font-weight: 900; font-size: 1.2em; text-align: center; ${row.team1_score >= 25 ? 'border: 3px solid #FFD700; box-shadow: 0 0 15px rgba(255,215,0,0.5);' : ''}">
                                 ${row.team1_score} ${row.team1_score >= 25 ? '🏆' : ''}
                             </div>
-                            <div style="background: ${team2Color}; color: white; padding: 5px; border-radius: 5px; font-weight: 900; font-size: 1.2em; ${row.team2_score >= 25 ? 'border: 3px solid #FFD700;' : ''}">
+                            <div style="background: ${team2Color}; color: white; padding: 8px; border-radius: 8px; font-weight: 900; font-size: 1.2em; text-align: center; ${row.team2_score >= 25 ? 'border: 3px solid #FFD700; box-shadow: 0 0 15px rgba(255,215,0,0.5);' : ''}">
                                 ${row.team2_score} ${row.team2_score >= 25 ? '🏆' : ''}
                             </div>
                         </div>
@@ -1537,9 +1539,11 @@
                 `;
 
                 // Won By dropdown
+                const wonColor = row.wonBy === row.team1 ? team1Color : 
+                                row.wonBy === row.team2 ? team2Color : 'white';
                 tr.innerHTML += `
                     <td>
-                        <select onchange="updateWonBy(${index}, this.value)" style="width: 100%; padding: 8px; font-weight: 700; border: 3px solid #D2691E; border-radius: 8px; ${row.wonBy ? 'background: #90EE90;' : ''}">
+                        <select onchange="updateWonBy(${index}, this.value)" style="width: 100%; padding: 10px; font-weight: 700; border: 3px solid #D2691E; border-radius: 10px; background: ${wonColor}; ${row.wonBy ? 'color: white;' : ''}">
                             <option value="">Select</option>
                             <option value="${row.team1}" ${row.wonBy === row.team1 ? 'selected' : ''}>${row.team1}</option>
                             <option value="${row.team2}" ${row.wonBy === row.team2 ? 'selected' : ''}>${row.team2}</option>
@@ -2203,9 +2207,27 @@
             saveCurrentState();
         }
 
+        function toggleMatchBreak(rowIndex) {
+            const row = pointsTableData[rowIndex];
+            const currentValue = row.break;
+            
+            // Cycle through: '' -> team1 -> team2 -> ''
+            if (!currentValue) {
+                row.break = row.team1;
+            } else if (currentValue === row.team1) {
+                row.break = row.team2;
+            } else {
+                row.break = '';
+            }
+            
+            logEdit('Points Table', `Row ${row.serial} - Break`, currentValue, row.break);
+            saveCurrentState();
+            renderPointsTable();
+        }
+
         function toggleBoardTeam(rowIndex, boardNum, type) {
             const row = pointsTableData[rowIndex];
-            const field = type === 'break' ? `board${boardNum}_break_team` : `board${boardNum}_q_team`;
+            const field = `board${boardNum}_q_team`; // Only queen now, break is per match
             const currentValue = row[field];
             
             // Cycle through: '' -> team1 -> team2 -> ''
@@ -2217,7 +2239,7 @@
                 row[field] = '';
             }
             
-            logEdit('Points Table', `Row ${row.serial} - Board ${boardNum} ${type}`, currentValue, row[field]);
+            logEdit('Points Table', `Row ${row.serial} - Board ${boardNum} queen`, currentValue, row[field]);
             saveCurrentState();
             renderPointsTable();
         }
