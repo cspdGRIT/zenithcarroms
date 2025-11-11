@@ -958,9 +958,7 @@
 
             .points-table {
                 font-size: 13px;
-                display: block;
-                overflow-x: auto;
-                white-space: nowrap;
+                display: table;
                 width: max-content;
                 min-width: 100%;
             }
@@ -968,23 +966,48 @@
             .points-table thead,
             .points-table tbody,
             .points-table tr {
-                display: table;
-                width: 100%;
-                table-layout: auto;
+                display: table-row;
+            }
+
+            .points-table th,
+            .points-table td {
+                display: table-cell;
+            }
+
+            /* Make board headers more prominent on mobile */
+            .points-table th.board-header {
+                font-size: 0.9em;
+                padding: 10px 8px;
+                font-weight: 900;
+                border-bottom: 1px solid rgba(255,255,255,0.5);
+            }
+
+            /* Sub-headers (Q, T1, T2) smaller and grouped under board */
+            .points-table th.sub-header {
+                font-size: 0.7em;
+                padding: 8px 6px;
+                font-weight: 700;
+                border-top: none;
+            }
+
+            /* Visual grouping: add left border to first sub-header of each board */
+            .points-table th.sub-header:nth-of-type(3n+1),
+            .points-table td:nth-of-type(3n+4) {
+                border-left: 3px solid rgba(102, 126, 234, 0.3);
             }
 
             .points-table th {
-                padding: 12px 8px;
+                padding: 10px 6px;
                 font-size: 0.75em;
                 letter-spacing: 0.5px;
                 white-space: nowrap;
-                min-width: 50px;
+                min-width: 45px;
             }
 
             .points-table td {
-                padding: 14px 10px;
+                padding: 14px 8px;
                 white-space: nowrap;
-                min-width: 50px;
+                min-width: 45px;
                 min-height: 48px;
             }
 
@@ -1016,8 +1039,8 @@
                 align-items: center;
                 justify-content: center;
                 font-size: 1.1em;
-                min-width: 60px;
-                padding: 14px 12px;
+                min-width: 55px;
+                padding: 14px 10px;
             }
 
             .queen-box {
@@ -1028,7 +1051,7 @@
             /* Larger touch targets for toggles */
             td[onclick*="toggle"] {
                 min-height: 52px;
-                min-width: 52px;
+                min-width: 50px;
                 cursor: pointer;
             }
 
