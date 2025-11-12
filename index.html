@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-title" content="Carrom Manager">
     <meta name="mobile-web-app-capable" content="yes">
     <link rel="manifest" href="manifest.json">
-    <title>🎯 Carroms@Zenith 2025 🎯</title>
+    <title>🎯 Ultimate Carrom Manager - Ultra Dynamic Edition</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Playfair+Display:wght@700;900&display=swap');
 
@@ -349,6 +349,58 @@
             border: 1px solid #e2e8f0;
             background: white;
             transition: all 0.3s;
+        }
+
+        /* Fixed widths for static columns for better alignment */
+        .points-table th:nth-child(1),
+        .points-table td:nth-child(1) {
+            min-width: 50px;
+            width: 50px;
+        }
+
+        .points-table th:nth-child(2),
+        .points-table td:nth-child(2) {
+            min-width: 130px;
+            width: 130px;
+        }
+
+        .points-table th:nth-child(3),
+        .points-table td:nth-child(3) {
+            min-width: 160px;
+            width: 160px;
+        }
+
+        .points-table th:nth-child(4),
+        .points-table td:nth-child(4) {
+            min-width: 70px;
+            width: 70px;
+        }
+
+        /* Dynamic board columns - consistent width */
+        .points-table td[onclick*="toggleBoardTeam"],
+        .points-table td[onclick*="editTeamPoints"] {
+            min-width: 60px;
+            width: 60px;
+        }
+
+        /* Scores column */
+        .points-table td[colspan="2"] {
+            min-width: 100px;
+            width: 100px;
+        }
+
+        /* Won By column */
+        .points-table th:nth-last-child(2),
+        .points-table td:nth-last-child(2) {
+            min-width: 120px;
+            width: 120px;
+        }
+
+        /* Actions column */
+        .points-table th:last-child,
+        .points-table td:last-child {
+            min-width: 120px;
+            width: 120px;
         }
 
         .points-table tr:hover td {
@@ -1027,6 +1079,18 @@
                 box-shadow: 3px 0 8px rgba(0, 0, 0, 0.2);
             }
 
+            /* Date column mobile */
+            .points-table th:nth-child(2),
+            .points-table td:nth-child(2) {
+                min-width: 115px !important;
+                width: 115px !important;
+            }
+
+            .points-table td:nth-child(2) input[type="date"] {
+                font-size: 0.8em;
+                padding: 6px 4px;
+            }
+
             .serial-col {
                 font-size: 1em;
                 min-width: 40px !important;
@@ -1217,8 +1281,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎯 Carroms@Zenith 2025</h1>
-            <p>Professional Tournament Management 🎯</p>
+            <h1>🎯 ULTIMATE CARROM MANAGER</h1>
+            <p>Professional Tournament Management - Ultra Dynamic Edition</p>
         </div>
 
         <div class="main-layout">
@@ -1229,6 +1293,9 @@
                 </div>
                 <div class="nav-item" onclick="showSection('pointsTable')">
                     <span class="icon">📊</span> Points Table
+                </div>
+                <div class="nav-item" onclick="showSection('standings')">
+                    <span class="icon">🏆</span> Standings
                 </div>
                 <div class="nav-item" onclick="showSection('teams')">
                     <span class="icon">👥</span> Teams
@@ -1303,7 +1370,7 @@
                 <div id="pointsTable" class="content-section">
                     <div class="section-header">
                         <h2>📊 Points Table</h2>
-                        <p>Single break per match • Queen per board (colored) • First to 25 wins • Click to toggle Break & Queen</p>
+                        <p>Match date • Single break per match • Queen per board (colored) • First to 25 wins • Click to toggle Break & Queen</p>
                     </div>
 
                     <div style="background: linear-gradient(135deg, #FFF8DC, #FFE4B5); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 3px solid #FFD700;">
@@ -1360,6 +1427,65 @@
                             <thead id="tableHeader"></thead>
                             <tbody id="pointsTableBody"></tbody>
                         </table>
+                    </div>
+                </div>
+
+                <!-- Standings -->
+                <div id="standings" class="content-section">
+                    <div class="section-header">
+                        <h2>🏆 Standings</h2>
+                        <p>Daily and overall tournament standings with filters</p>
+                    </div>
+
+                    <!-- Filters -->
+                    <div style="background: linear-gradient(135deg, #ffeaa7, #fdcb6e); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 3px solid rgba(102, 126, 234, 0.3);">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div class="form-group" style="margin: 0;">
+                                <label>📅 Filter by Date:</label>
+                                <select id="standingsDateFilter" onchange="updateStandings()" style="padding: 12px; border-radius: 8px; border: 2px solid #667eea; font-weight: 600;">
+                                    <option value="all">All Dates</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin: 0;">
+                                <label>👥 Filter by Team:</label>
+                                <select id="standingsTeamFilter" onchange="updateStandings()" style="padding: 12px; border-radius: 8px; border: 2px solid #667eea; font-weight: 600;">
+                                    <option value="all">All Teams</option>
+                                </select>
+                            </div>
+                            <div style="display: flex; align-items: flex-end;">
+                                <button class="btn btn-primary" onclick="resetStandingsFilters()">
+                                    🔄 Reset Filters
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Overall Tournament Standings -->
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: #667eea; margin-bottom: 15px; font-size: 1.5em;">📊 Overall Tournament Standings</h3>
+                        <div class="table-wrapper">
+                            <table class="points-table">
+                                <thead>
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Team</th>
+                                        <th>Matches</th>
+                                        <th>Won</th>
+                                        <th>Lost</th>
+                                        <th>Points</th>
+                                        <th>Queens</th>
+                                        <th>Win %</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="overallStandingsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Daily Standings -->
+                    <div>
+                        <h3 style="color: #667eea; margin-bottom: 15px; font-size: 1.5em;">📅 Daily Breakdown</h3>
+                        <div id="dailyStandingsContainer"></div>
                     </div>
                 </div>
 
@@ -1703,9 +1829,11 @@
                 return;
             }
 
+            const today = new Date().toISOString().split('T')[0];
             const row = {
                 id: Date.now(),
                 serial: pointsTableData.length + 1,
+                date: today, // Add date field
                 break: '', // Single break for entire match (team name)
                 team1: teams[0]?.name || '',
                 team2: teams[1]?.name || '',
@@ -1728,6 +1856,8 @@
             saveCurrentState();
             renderPointsTable();
             updateStats();
+            updateStandings();
+            populateStandingsFilters();
             showToast('Match added!', '✅');
         }
 
@@ -1838,7 +1968,7 @@
             
             // Create dynamic header
             let headerHTML = '<tr>';
-            headerHTML += '<th rowspan="2">S</th><th rowspan="2">Teams</th><th rowspan="2">Break</th>';
+            headerHTML += '<th rowspan="2">S</th><th rowspan="2">Date</th><th rowspan="2">Teams</th><th rowspan="2">Break</th>';
             for (let i = 1; i <= maxBoards; i++) {
                 headerHTML += `<th colspan="3" class="board-header">B${i}</th>`;
             }
@@ -1867,6 +1997,15 @@
                 const team2Color = teams.find(t => t.name === row.team2)?.color || '#666';
                 
                 tr.innerHTML = `<td class="serial-col">${row.serial}</td>`;
+                
+                // Date column
+                tr.innerHTML += `
+                    <td style="min-width: 120px;">
+                        <input type="date" value="${row.date || new Date().toISOString().split('T')[0]}" 
+                               onchange="updateMatchDate(${index}, this.value)"
+                               style="width: 100%; padding: 8px; border: 2px solid #667eea; border-radius: 8px; font-weight: 600; font-size: 0.9em;">
+                    </td>
+                `;
                 
                 // Teams column
                 tr.innerHTML += `
@@ -2781,6 +2920,237 @@
             }
         }
 
+        // Update match date
+        function updateMatchDate(rowIndex, newDate) {
+            const row = pointsTableData[rowIndex];
+            const oldDate = row.date;
+            row.date = newDate;
+            logEdit('Points Table', `Row ${row.serial} - Date`, oldDate, newDate);
+            saveCurrentState();
+            updateStandings();
+            populateStandingsFilters();
+            showToast('Date updated!', '✅');
+        }
+
+        // Populate Standings Filters
+        function populateStandingsFilters() {
+            // Ensure all matches have dates (migration for old data)
+            const today = new Date().toISOString().split('T')[0];
+            pointsTableData.forEach(row => {
+                if (!row.date) {
+                    row.date = today;
+                }
+            });
+            
+            const dateFilter = document.getElementById('standingsDateFilter');
+            const teamFilter = document.getElementById('standingsTeamFilter');
+            
+            if (!dateFilter || !teamFilter) return;
+            
+            // Get unique dates
+            const dates = [...new Set(pointsTableData.map(r => r.date).filter(d => d))].sort().reverse();
+            dateFilter.innerHTML = '<option value="all">All Dates</option>' + 
+                dates.map(d => `<option value="${d}">${formatDate(d)}</option>`).join('');
+            
+            // Get all teams
+            teamFilter.innerHTML = '<option value="all">All Teams</option>' + 
+                teams.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+        }
+
+        // Format date for display
+        function formatDate(dateStr) {
+            if (!dateStr) return 'No Date';
+            const d = new Date(dateStr + 'T00:00:00');
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return d.toLocaleDateString('en-US', options);
+        }
+
+        // Reset Standings Filters
+        function resetStandingsFilters() {
+            document.getElementById('standingsDateFilter').value = 'all';
+            document.getElementById('standingsTeamFilter').value = 'all';
+            updateStandings();
+        }
+
+        // Update Standings
+        function updateStandings() {
+            const dateFilter = document.getElementById('standingsDateFilter')?.value || 'all';
+            const teamFilter = document.getElementById('standingsTeamFilter')?.value || 'all';
+            
+            // Filter matches
+            let filteredMatches = pointsTableData.filter(row => row.wonBy);
+            if (dateFilter !== 'all') {
+                filteredMatches = filteredMatches.filter(row => row.date === dateFilter);
+            }
+            if (teamFilter !== 'all') {
+                filteredMatches = filteredMatches.filter(row => 
+                    row.team1 === teamFilter || row.team2 === teamFilter
+                );
+            }
+            
+            // Calculate overall standings
+            const standings = {};
+            teams.forEach(team => {
+                standings[team.name] = {
+                    team: team.name,
+                    color: team.color,
+                    matches: 0,
+                    won: 0,
+                    lost: 0,
+                    points: 0,
+                    queens: 0
+                };
+            });
+            
+            filteredMatches.forEach(row => {
+                if (row.team1 && standings[row.team1]) {
+                    standings[row.team1].matches++;
+                    standings[row.team1].points += row.team1_score;
+                    // Count queens
+                    for (let i = 1; i <= (row.numBoards || 3); i++) {
+                        if (row[`board${i}_q_team`] === row.team1) {
+                            standings[row.team1].queens++;
+                        }
+                    }
+                    if (row.wonBy === row.team1) standings[row.team1].won++;
+                    else if (row.wonBy) standings[row.team1].lost++;
+                }
+                
+                if (row.team2 && standings[row.team2]) {
+                    standings[row.team2].matches++;
+                    standings[row.team2].points += row.team2_score;
+                    // Count queens
+                    for (let i = 1; i <= (row.numBoards || 3); i++) {
+                        if (row[`board${i}_q_team`] === row.team2) {
+                            standings[row.team2].queens++;
+                        }
+                    }
+                    if (row.wonBy === row.team2) standings[row.team2].won++;
+                    else if (row.wonBy) standings[row.team2].lost++;
+                }
+            });
+            
+            // Sort by wins, then by points
+            const sortedStandings = Object.values(standings)
+                .filter(s => s.matches > 0)
+                .sort((a, b) => {
+                    if (b.won !== a.won) return b.won - a.won;
+                    return b.points - a.points;
+                });
+            
+            // Render overall standings
+            renderOverallStandings(sortedStandings);
+            
+            // Render daily breakdown
+            renderDailyStandings(filteredMatches);
+        }
+
+        // Render Overall Standings
+        function renderOverallStandings(standings) {
+            const tbody = document.getElementById('overallStandingsBody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            standings.forEach((stat, index) => {
+                const winPercent = stat.matches > 0 ? ((stat.won / stat.matches) * 100).toFixed(1) : '0.0';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight: 900; font-size: 1.2em; color: ${index < 3 ? '#FFD700' : '#667eea'};">
+                        ${index + 1}${index === 0 ? ' 🥇' : index === 1 ? ' 🥈' : index === 2 ? ' 🥉' : ''}
+                    </td>
+                    <td style="text-align: left;">
+                        <span style="display: inline-block; width: 15px; height: 15px; background: ${stat.color}; border: 2px solid #333; margin-right: 8px; border-radius: 3px;"></span>
+                        <strong>${stat.team}</strong>
+                    </td>
+                    <td style="font-weight: 700;">${stat.matches}</td>
+                    <td style="color: #56ab2f; font-weight: 700;">${stat.won}</td>
+                    <td style="color: #f5576c; font-weight: 700;">${stat.lost}</td>
+                    <td style="font-size: 1.2em; font-weight: 900; color: #667eea;">${stat.points}</td>
+                    <td style="font-weight: 700;">👑 ${stat.queens}</td>
+                    <td style="font-weight: 700;">${winPercent}%</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            if (standings.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="padding: 30px; color: #999; font-style: italic;">No matches completed yet</td></tr>';
+            }
+        }
+
+        // Render Daily Standings
+        function renderDailyStandings(matches) {
+            const container = document.getElementById('dailyStandingsContainer');
+            if (!container) return;
+            
+            // Group by date
+            const matchesByDate = {};
+            matches.forEach(match => {
+                const date = match.date || 'no-date';
+                if (!matchesByDate[date]) matchesByDate[date] = [];
+                matchesByDate[date].push(match);
+            });
+            
+            // Sort dates (newest first)
+            const sortedDates = Object.keys(matchesByDate).sort().reverse();
+            
+            container.innerHTML = '';
+            sortedDates.forEach(date => {
+                const dayMatches = matchesByDate[date];
+                const dateDiv = document.createElement('div');
+                dateDiv.style.marginBottom = '25px';
+                dateDiv.style.background = 'linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1))';
+                dateDiv.style.padding = '20px';
+                dateDiv.style.borderRadius = '15px';
+                dateDiv.style.border = '2px solid rgba(102, 126, 234, 0.3)';
+                
+                dateDiv.innerHTML = `
+                    <h4 style="color: #667eea; margin-bottom: 15px; font-size: 1.2em;">
+                        📅 ${formatDate(date)} - ${dayMatches.length} match${dayMatches.length !== 1 ? 'es' : ''}
+                    </h4>
+                    <div class="table-wrapper">
+                        <table class="points-table" style="font-size: 0.95em;">
+                            <thead>
+                                <tr>
+                                    <th>Match</th>
+                                    <th>Team 1</th>
+                                    <th>Score</th>
+                                    <th>vs</th>
+                                    <th>Score</th>
+                                    <th>Team 2</th>
+                                    <th>Winner</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${dayMatches.map((match, idx) => {
+                                    const team1Color = teams.find(t => t.name === match.team1)?.color || '#999';
+                                    const team2Color = teams.find(t => t.name === match.team2)?.color || '#666';
+                                    const winnerColor = match.wonBy === match.team1 ? team1Color : 
+                                                       match.wonBy === match.team2 ? team2Color : 'white';
+                                    return `
+                                        <tr>
+                                            <td style="font-weight: 700;">#${match.serial}</td>
+                                            <td style="background: ${team1Color}; color: white; font-weight: 700;">${match.team1}</td>
+                                            <td style="font-size: 1.3em; font-weight: 900; ${match.team1_score >= 25 ? 'color: #FFD700;' : ''}">${match.team1_score}${match.team1_score >= 25 ? ' 🏆' : ''}</td>
+                                            <td style="color: #999;">vs</td>
+                                            <td style="font-size: 1.3em; font-weight: 900; ${match.team2_score >= 25 ? 'color: #FFD700;' : ''}">${match.team2_score}${match.team2_score >= 25 ? ' 🏆' : ''}</td>
+                                            <td style="background: ${team2Color}; color: white; font-weight: 700;">${match.team2}</td>
+                                            <td style="background: ${winnerColor}; color: white; font-weight: 900; font-size: 1.1em;">${match.wonBy || '-'}</td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                
+                container.appendChild(dateDiv);
+            });
+            
+            if (sortedDates.length === 0) {
+                container.innerHTML = '<p style="padding: 30px; text-align: center; color: #999; font-style: italic; background: white; border-radius: 15px;">No matches found with the current filters</p>';
+            }
+        }
+
         // Auto-save every 30 seconds
         setInterval(function() {
             if (pointsTableData.length > 0) {
@@ -2798,7 +3168,19 @@
                     .catch(function(err) {
                         console.log('ServiceWorker registration failed: ', err);
                     });
+                
+                // Initialize standings after load
+                setTimeout(() => {
+                    populateStandingsFilters();
+                    updateStandings();
+                }, 500);
             });
+        } else {
+            // Initialize standings even without service worker
+            setTimeout(() => {
+                populateStandingsFilters();
+                updateStandings();
+            }, 500);
         }
 
         // Prompt to install PWA
@@ -2824,9 +3206,6 @@
                 }
             }, 10000);
         });
-        if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.register('/service-worker.js');
-        }
     </script>
 </body>
 </html>
