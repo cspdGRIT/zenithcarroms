@@ -2,7 +2,7 @@
   "name": "Carrom Tournament Manager",
   "short_name": "Carrom Manager",
   "description": "Professional carrom tournament management with team scoring",
-  "start_url": "/index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#667eea",
   "theme_color": "#667eea",
