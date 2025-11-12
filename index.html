@@ -354,53 +354,62 @@
         /* Fixed widths for static columns for better alignment */
         .points-table th:nth-child(1),
         .points-table td:nth-child(1) {
-            min-width: 50px;
-            width: 50px;
+            min-width: 50px !important;
+            max-width: 50px !important;
+            width: 50px !important;
         }
 
         .points-table th:nth-child(2),
         .points-table td:nth-child(2) {
-            min-width: 130px;
-            width: 130px;
+            min-width: 130px !important;
+            max-width: 130px !important;
+            width: 130px !important;
         }
 
         .points-table th:nth-child(3),
         .points-table td:nth-child(3) {
-            min-width: 160px;
-            width: 160px;
+            min-width: 160px !important;
+            max-width: 160px !important;
+            width: 160px !important;
         }
 
         .points-table th:nth-child(4),
         .points-table td:nth-child(4) {
-            min-width: 70px;
-            width: 70px;
+            min-width: 70px !important;
+            max-width: 70px !important;
+            width: 70px !important;
         }
 
-        /* Dynamic board columns - consistent width */
+        /* Board columns - Q, T1, T2 cells */
         .points-table td[onclick*="toggleBoardTeam"],
         .points-table td[onclick*="editTeamPoints"] {
-            min-width: 60px;
-            width: 60px;
+            min-width: 60px !important;
+            max-width: 60px !important;
+            width: 60px !important;
         }
 
         /* Scores column */
-        .points-table td[colspan="2"] {
-            min-width: 100px;
-            width: 100px;
+        .points-table th:nth-last-child(3),
+        .points-table td:nth-last-child(3) {
+            min-width: 100px !important;
+            max-width: 100px !important;
+            width: 100px !important;
         }
 
         /* Won By column */
         .points-table th:nth-last-child(2),
         .points-table td:nth-last-child(2) {
-            min-width: 120px;
-            width: 120px;
+            min-width: 120px !important;
+            max-width: 120px !important;
+            width: 120px !important;
         }
 
         /* Actions column */
         .points-table th:last-child,
         .points-table td:last-child {
-            min-width: 120px;
-            width: 120px;
+            min-width: 120px !important;
+            max-width: 120px !important;
+            width: 120px !important;
         }
 
         .points-table tr:hover td {
@@ -1103,6 +1112,8 @@
                 padding: 12px 10px;
                 font-weight: 900;
                 border-bottom: 1px solid rgba(255,255,255,0.5);
+                min-width: 180px !important;
+                text-align: center;
             }
 
             /* Sub-headers (Q, T1, T2) smaller and grouped under board */
@@ -1111,6 +1122,9 @@
                 padding: 10px 8px;
                 font-weight: 700;
                 border-top: none;
+                min-width: 60px !important;
+                max-width: 60px !important;
+                width: 60px !important;
             }
 
             /* Visual grouping: add left border to first sub-header of each board */
@@ -1233,36 +1247,59 @@
             }
 
             /* Scores column mobile - bigger and prominent */
-            td[colspan="2"] > div {
+            .points-table th:nth-last-child(3),
+            .points-table td:nth-last-child(3) {
+                min-width: 100px !important;
+                max-width: 100px !important;
+                width: 100px !important;
+            }
+
+            .points-table td:nth-last-child(3) > div {
                 gap: 8px !important;
             }
 
-            td[colspan="2"] > div > div {
+            .points-table td:nth-last-child(3) > div > div {
                 font-size: 1.6em !important;
                 padding: 14px 12px !important;
-                min-width: 85px;
+                min-width: 90px;
                 border-radius: 12px !important;
                 transition: all 0.2s;
             }
 
             /* Won By dropdown - bigger touch target */
-            td > select {
+            .points-table th:nth-last-child(2),
+            .points-table td:nth-last-child(2) {
+                min-width: 120px !important;
+                max-width: 120px !important;
+                width: 120px !important;
+            }
+
+            .points-table td:nth-last-child(2) > select {
                 font-size: 1em !important;
                 padding: 14px 12px !important;
                 min-height: 52px;
-                min-width: 110px;
+                width: 110px !important;
                 border: 2px solid #667eea;
                 border-radius: 10px;
                 transition: all 0.2s;
             }
 
-            td > select:focus {
+            .points-table td:nth-last-child(2) > select:focus {
                 transform: scale(1.05);
             }
 
             /* Actions column mobile - cleaner grid */
+            .points-table th:last-child,
+            .points-table td:last-child {
+                min-width: 120px !important;
+                max-width: 120px !important;
+                width: 120px !important;
+            }
+
             .action-col {
                 min-width: 120px !important;
+                max-width: 120px !important;
+                width: 120px !important;
             }
 
             .row-actions {
@@ -2074,17 +2111,25 @@
             
             // Create dynamic header
             let headerHTML = '<tr>';
-            headerHTML += '<th rowspan="2">S</th><th rowspan="2">Date</th><th rowspan="2">Teams</th><th rowspan="2">Break</th>';
+            headerHTML += '<th rowspan="2" style="min-width: 50px;">S</th>';
+            headerHTML += '<th rowspan="2" style="min-width: 130px;">Date</th>';
+            headerHTML += '<th rowspan="2" style="min-width: 160px;">Teams</th>';
+            headerHTML += '<th rowspan="2" style="min-width: 70px;">Break</th>';
+            
             for (let i = 1; i <= maxBoards; i++) {
-                headerHTML += `<th colspan="3" class="board-header">B${i}</th>`;
+                headerHTML += `<th colspan="3" class="board-header" style="min-width: 180px;">B${i}</th>`;
             }
-            headerHTML += '<th colspan="2" rowspan="2">Scores</th><th rowspan="2">Won By</th><th rowspan="2">Actions</th></tr>';
+            
+            headerHTML += '<th rowspan="2" style="min-width: 100px;">Scores</th>';
+            headerHTML += '<th rowspan="2" style="min-width: 120px;">Won By</th>';
+            headerHTML += '<th rowspan="2" style="min-width: 120px;">Actions</th>';
+            headerHTML += '</tr>';
             
             headerHTML += '<tr>';
             for (let i = 1; i <= maxBoards; i++) {
-                headerHTML += '<th class="sub-header">Q</th>';
-                headerHTML += '<th class="sub-header">T1</th>';
-                headerHTML += '<th class="sub-header">T2</th>';
+                headerHTML += '<th class="sub-header" style="min-width: 60px;">Q</th>';
+                headerHTML += '<th class="sub-header" style="min-width: 60px;">T1</th>';
+                headerHTML += '<th class="sub-header" style="min-width: 60px;">T2</th>';
             }
             headerHTML += '</tr>';
             
@@ -2178,7 +2223,7 @@
                 
                 // Scores column (both teams)
                 tr.innerHTML += `
-                    <td colspan="2">
+                    <td style="min-width: 100px;">
                         <div style="display: flex; flex-direction: column; gap: 5px;">
                             <div style="background: ${team1Color}; color: white; padding: 8px; border-radius: 8px; font-weight: 900; font-size: 1.2em; text-align: center; ${row.team1_score >= 25 ? 'border: 3px solid #FFD700; box-shadow: 0 0 15px rgba(255,215,0,0.5);' : ''}">
                                 ${row.team1_score} ${row.team1_score >= 25 ? '🏆' : ''}
@@ -3257,7 +3302,451 @@
             }
         }
 
-        // Auto-save every 30 seconds
+        <!-- Chatbot Floater -->
+        <div id="chatbotFloater" onclick="toggleChatbot()" style="position: fixed; bottom: 25px; right: 25px; width: 60px; height: 60px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5); cursor: pointer; z-index: 1000; transition: all 0.3s; animation: float 3s ease-in-out infinite;">
+            <span style="font-size: 2em;">🤖</span>
+        </div>
+
+        <!-- Chatbot Window -->
+        <div id="chatbotWindow" style="position: fixed; bottom: 95px; right: 25px; width: 350px; max-width: calc(100vw - 50px); height: 500px; max-height: calc(100vh - 150px); background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); display: none; flex-direction: column; z-index: 999; overflow: hidden;">
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 20px; display: flex; align-items: center; justify-content: space-between; border-radius: 20px 20px 0 0;">
+                <div>
+                    <h3 style="margin: 0; font-size: 1.2em;">🤖 Carrom Assistant</h3>
+                    <p style="margin: 5px 0 0 0; font-size: 0.85em; opacity: 0.9;">Ask me anything!</p>
+                </div>
+                <button onclick="toggleChatbot()" style="background: rgba(255,255,255,0.2); border: none; color: white; font-size: 1.5em; cursor: pointer; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">✕</button>
+            </div>
+
+            <!-- Messages -->
+            <div id="chatMessages" style="flex: 1; overflow-y: auto; padding: 20px; background: #f8f9fa; display: flex; flex-direction: column; gap: 15px;">
+                <div class="chat-message bot-message" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 12px 16px; border-radius: 18px 18px 18px 4px; max-width: 80%; align-self: flex-start; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);">
+                    <p style="margin: 0; line-height: 1.5;">Hi! 👋 I can help you with match scores, team stats, and tournament info. Try asking:</p>
+                    <ul style="margin: 10px 0 0 0; padding-left: 20px; line-height: 1.8;">
+                        <li>What's the score of Team Red?</li>
+                        <li>Show today's matches</li>
+                        <li>Who won the most matches?</li>
+                        <li>Team stats for Thunder</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div style="padding: 15px; background: white; border-top: 1px solid #e0e0e0; display: flex; gap: 10px; align-items: center;">
+                <input type="text" id="chatInput" placeholder="Ask me anything..." onkeypress="if(event.key==='Enter') sendChatMessage()" style="flex: 1; padding: 12px 16px; border: 2px solid #667eea; border-radius: 25px; font-size: 0.95em; outline: none;">
+                <button onclick="sendChatMessage()" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.3em; transition: all 0.2s; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);">
+                    💬
+                </button>
+                <button id="voiceBtn" onclick="startVoiceInput()" style="background: linear-gradient(135deg, #f093fb, #f5576c); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.3em; transition: all 0.2s; box-shadow: 0 4px 12px rgba(240, 147, 251, 0.4);">
+                    🎤
+                </button>
+            </div>
+        </div>
+
+        <style>
+            @keyframes float {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-10px); }
+            }
+
+            #chatbotFloater:hover {
+                transform: scale(1.1);
+                box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+            }
+
+            #chatbotFloater:active {
+                transform: scale(0.95);
+            }
+
+            #chatMessages::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            #chatMessages::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 10px;
+            }
+
+            #chatMessages::-webkit-scrollbar-thumb {
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                border-radius: 10px;
+            }
+
+            .chat-message {
+                animation: slideIn 0.3s ease;
+            }
+
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .user-message {
+                background: linear-gradient(135deg, #4facfe, #00f2fe);
+                color: white;
+                padding: 12px 16px;
+                border-radius: 18px 18px 4px 18px;
+                max-width: 80%;
+                align-self: flex-end;
+                box-shadow: 0 2px 8px rgba(79, 172, 254, 0.3);
+            }
+
+            .bot-message {
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                color: white;
+                padding: 12px 16px;
+                border-radius: 18px 18px 18px 4px;
+                max-width: 80%;
+                align-self: flex-start;
+                box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+            }
+
+            @media (max-width: 768px) {
+                #chatbotWindow {
+                    width: calc(100vw - 30px);
+                    height: calc(100vh - 120px);
+                    bottom: 85px;
+                    right: 15px;
+                }
+            }
+        </style>
+
+        <script>
+            let recognition = null;
+            let isListening = false;
+
+            function toggleChatbot() {
+                const window = document.getElementById('chatbotWindow');
+                const floater = document.getElementById('chatbotFloater');
+                
+                if (window.style.display === 'none' || window.style.display === '') {
+                    window.style.display = 'flex';
+                    floater.style.transform = 'scale(0.9)';
+                    setTimeout(() => document.getElementById('chatInput').focus(), 300);
+                } else {
+                    window.style.display = 'none';
+                    floater.style.transform = 'scale(1)';
+                }
+            }
+
+            function sendChatMessage() {
+                const input = document.getElementById('chatInput');
+                const message = input.value.trim();
+                
+                if (!message) return;
+                
+                // Add user message
+                addChatMessage(message, 'user');
+                input.value = '';
+                
+                // Process and respond
+                setTimeout(() => {
+                    const response = processChatQuery(message);
+                    addChatMessage(response, 'bot');
+                }, 500);
+            }
+
+            function addChatMessage(text, sender) {
+                const messagesDiv = document.getElementById('chatMessages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `chat-message ${sender}-message`;
+                messageDiv.innerHTML = `<p style="margin: 0; line-height: 1.5;">${text}</p>`;
+                messagesDiv.appendChild(messageDiv);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+
+            function processChatQuery(query) {
+                const lowerQuery = query.toLowerCase();
+                
+                // Get today's date
+                const today = new Date().toISOString().split('T')[0];
+                
+                // Score queries
+                if (lowerQuery.includes('score') || lowerQuery.includes('points')) {
+                    const teamMatch = findTeamInQuery(lowerQuery);
+                    if (teamMatch) {
+                        return getTeamScore(teamMatch);
+                    }
+                    return "Please specify which team you'd like to know the score for.";
+                }
+                
+                // Today's matches
+                if (lowerQuery.includes('today') && lowerQuery.includes('match')) {
+                    return getTodayMatches();
+                }
+                
+                // Date-specific matches
+                if (lowerQuery.includes('match') && (lowerQuery.includes('on') || lowerQuery.includes('date'))) {
+                    const dateMatch = query.match(/\d{4}-\d{2}-\d{2}/);
+                    if (dateMatch) {
+                        return getMatchesByDate(dateMatch[0]);
+                    }
+                }
+                
+                // Winner queries
+                if (lowerQuery.includes('who won') || lowerQuery.includes('winner')) {
+                    if (lowerQuery.includes('most')) {
+                        return getMostWins();
+                    }
+                    const teamMatch = findTeamInQuery(lowerQuery);
+                    if (teamMatch) {
+                        return getTeamWins(teamMatch);
+                    }
+                }
+                
+                // Team stats
+                if (lowerQuery.includes('stat') || lowerQuery.includes('record')) {
+                    const teamMatch = findTeamInQuery(lowerQuery);
+                    if (teamMatch) {
+                        return getTeamStats(teamMatch);
+                    }
+                }
+                
+                // Teams list
+                if (lowerQuery.includes('teams') || lowerQuery.includes('list')) {
+                    return getTeamsList();
+                }
+                
+                // Total matches
+                if (lowerQuery.includes('how many') && lowerQuery.includes('match')) {
+                    return `Total matches: ${pointsTableData.length}. Completed: ${pointsTableData.filter(r => r.wonBy).length}.`;
+                }
+                
+                // Help
+                if (lowerQuery.includes('help') || lowerQuery.includes('what can')) {
+                    return `I can help you with:\n• Team scores and stats\n• Today's matches\n• Match results by date\n• Winner information\n• Tournament standings\n\nTry: "What's Red's score?" or "Show today's matches"`;
+                }
+                
+                return "I'm not sure about that. Try asking about team scores, today's matches, or winner stats. Type 'help' for more options!";
+            }
+
+            function findTeamInQuery(query) {
+                for (let team of teams) {
+                    if (query.includes(team.name.toLowerCase())) {
+                        return team.name;
+                    }
+                }
+                return null;
+            }
+
+            function getTeamScore(teamName) {
+                let totalScore = 0;
+                let matches = 0;
+                
+                pointsTableData.forEach(row => {
+                    if (row.team1 === teamName) {
+                        totalScore += row.team1_score || 0;
+                        matches++;
+                    } else if (row.team2 === teamName) {
+                        totalScore += row.team2_score || 0;
+                        matches++;
+                    }
+                });
+                
+                if (matches === 0) {
+                    return `No matches found for ${teamName}.`;
+                }
+                
+                const wins = pointsTableData.filter(r => r.wonBy === teamName).length;
+                return `📊 <strong>${teamName}</strong>\n\n• Total Points: ${totalScore}\n• Matches Played: ${matches}\n• Wins: ${wins}\n• Avg Score: ${(totalScore / matches).toFixed(1)}`;
+            }
+
+            function getTodayMatches() {
+                const today = new Date().toISOString().split('T')[0];
+                const todayMatches = pointsTableData.filter(r => r.date === today);
+                
+                if (todayMatches.length === 0) {
+                    return `No matches scheduled for today (${formatDate(today)}).`;
+                }
+                
+                let response = `📅 <strong>Today's Matches (${formatDate(today)})</strong>\n\n`;
+                todayMatches.forEach((match, idx) => {
+                    response += `${idx + 1}. ${match.team1} vs ${match.team2}\n`;
+                    response += `   Score: ${match.team1_score || 0} - ${match.team2_score || 0}\n`;
+                    if (match.wonBy) response += `   Winner: ${match.wonBy} 🏆\n`;
+                    response += '\n';
+                });
+                
+                return response;
+            }
+
+            function getMatchesByDate(date) {
+                const matches = pointsTableData.filter(r => r.date === date);
+                
+                if (matches.length === 0) {
+                    return `No matches found for ${formatDate(date)}.`;
+                }
+                
+                let response = `📅 <strong>Matches on ${formatDate(date)}</strong>\n\n`;
+                matches.forEach((match, idx) => {
+                    response += `${idx + 1}. ${match.team1} vs ${match.team2}\n`;
+                    response += `   Score: ${match.team1_score || 0} - ${match.team2_score || 0}\n`;
+                    if (match.wonBy) response += `   Winner: ${match.wonBy} 🏆\n`;
+                    response += '\n';
+                });
+                
+                return response;
+            }
+
+            function getMostWins() {
+                const winCount = {};
+                teams.forEach(t => winCount[t.name] = 0);
+                
+                pointsTableData.forEach(row => {
+                    if (row.wonBy) {
+                        winCount[row.wonBy] = (winCount[row.wonBy] || 0) + 1;
+                    }
+                });
+                
+                const sorted = Object.entries(winCount).sort((a, b) => b[1] - a[1]);
+                
+                if (sorted.length === 0 || sorted[0][1] === 0) {
+                    return "No matches completed yet.";
+                }
+                
+                let response = `🏆 <strong>Most Wins</strong>\n\n`;
+                sorted.slice(0, 5).forEach(([team, wins], idx) => {
+                    const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '  ';
+                    response += `${medal} ${team}: ${wins} wins\n`;
+                });
+                
+                return response;
+            }
+
+            function getTeamWins(teamName) {
+                const wins = pointsTableData.filter(r => r.wonBy === teamName).length;
+                const totalMatches = pointsTableData.filter(r => 
+                    (r.team1 === teamName || r.team2 === teamName) && r.wonBy
+                ).length;
+                
+                if (totalMatches === 0) {
+                    return `${teamName} hasn't completed any matches yet.`;
+                }
+                
+                const winRate = ((wins / totalMatches) * 100).toFixed(1);
+                return `🏆 <strong>${teamName}</strong>\n\n• Wins: ${wins}\n• Total Matches: ${totalMatches}\n• Win Rate: ${winRate}%`;
+            }
+
+            function getTeamStats(teamName) {
+                let stats = {
+                    matches: 0,
+                    wins: 0,
+                    losses: 0,
+                    totalPoints: 0,
+                    queens: 0
+                };
+                
+                pointsTableData.forEach(row => {
+                    if (row.team1 === teamName) {
+                        stats.matches++;
+                        stats.totalPoints += row.team1_score || 0;
+                        if (row.wonBy === teamName) stats.wins++;
+                        else if (row.wonBy) stats.losses++;
+                        
+                        for (let i = 1; i <= (row.numBoards || 3); i++) {
+                            if (row[`board${i}_q_team`] === teamName) stats.queens++;
+                        }
+                    } else if (row.team2 === teamName) {
+                        stats.matches++;
+                        stats.totalPoints += row.team2_score || 0;
+                        if (row.wonBy === teamName) stats.wins++;
+                        else if (row.wonBy) stats.losses++;
+                        
+                        for (let i = 1; i <= (row.numBoards || 3); i++) {
+                            if (row[`board${i}_q_team`] === teamName) stats.queens++;
+                        }
+                    }
+                });
+                
+                if (stats.matches === 0) {
+                    return `No data found for ${teamName}.`;
+                }
+                
+                const avgScore = (stats.totalPoints / stats.matches).toFixed(1);
+                const winRate = stats.matches > 0 ? ((stats.wins / stats.matches) * 100).toFixed(1) : 0;
+                
+                return `📊 <strong>${teamName} Stats</strong>\n\n• Matches: ${stats.matches}\n• Wins: ${stats.wins}\n• Losses: ${stats.losses}\n• Total Points: ${stats.totalPoints}\n• Avg Score: ${avgScore}\n• Queens: 👑 ${stats.queens}\n• Win Rate: ${winRate}%`;
+            }
+
+            function getTeamsList() {
+                if (teams.length === 0) {
+                    return "No teams added yet.";
+                }
+                
+                let response = `👥 <strong>Teams (${teams.length})</strong>\n\n`;
+                teams.forEach((team, idx) => {
+                    response += `${idx + 1}. ${team.name}\n`;
+                });
+                
+                return response;
+            }
+
+            function startVoiceInput() {
+                if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                    addChatMessage("Voice input is not supported in your browser. Please try Chrome or Edge.", 'bot');
+                    return;
+                }
+                
+                if (isListening) {
+                    stopVoiceInput();
+                    return;
+                }
+                
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+                
+                const voiceBtn = document.getElementById('voiceBtn');
+                
+                recognition.onstart = function() {
+                    isListening = true;
+                    voiceBtn.style.background = 'linear-gradient(135deg, #ff6b6b, #ff4757)';
+                    voiceBtn.innerHTML = '🔴';
+                    addChatMessage("Listening... Speak now!", 'bot');
+                };
+                
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    document.getElementById('chatInput').value = transcript;
+                    addChatMessage(transcript, 'user');
+                    setTimeout(() => {
+                        const response = processChatQuery(transcript);
+                        addChatMessage(response, 'bot');
+                    }, 500);
+                };
+                
+                recognition.onerror = function(event) {
+                    addChatMessage(`Voice error: ${event.error}. Please try again.`, 'bot');
+                    stopVoiceInput();
+                };
+                
+                recognition.onend = function() {
+                    stopVoiceInput();
+                };
+                
+                recognition.start();
+            }
+
+            function stopVoiceInput() {
+                if (recognition) {
+                    recognition.stop();
+                }
+                isListening = false;
+                const voiceBtn = document.getElementById('voiceBtn');
+                voiceBtn.style.background = 'linear-gradient(135deg, #f093fb, #f5576c)';
+                voiceBtn.innerHTML = '🎤';
+            }
+        </script>
+
+        <!-- Auto-save every 30 seconds -->
         setInterval(function() {
             if (pointsTableData.length > 0) {
                 saveCurrentState();
