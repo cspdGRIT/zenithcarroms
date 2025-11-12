@@ -412,20 +412,83 @@
             position: relative;
             min-height: 35px;
             font-weight: 600;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .editable-cell:hover {
             background: linear-gradient(135deg, #ffeaa7, #fdcb6e) !important;
-            outline: 3px solid #f093fb;
+            outline: 2px solid #f093fb;
+            transform: scale(1.08);
+            box-shadow: 0 8px 20px rgba(240, 147, 251, 0.4);
+            z-index: 5;
+        }
+
+        .editable-cell:active {
             transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(240, 147, 251, 0.4);
         }
 
         .serial-col {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)) !important;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15)) !important;
             font-weight: 900;
             color: #667eea;
-            font-size: 1.1em;
+            font-size: 1.2em;
+            position: relative;
+        }
+
+        .serial-col::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 10%;
+            height: 80%;
+            width: 2px;
+            background: linear-gradient(180deg, transparent, #667eea, transparent);
+        }
+
+        /* Smooth scrolling and app-like feel */
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+
+        input, select, button {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+            transform: scale(1.02);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        /* App-like table cells */
+        .points-table td {
+            position: relative;
+        }
+
+        .points-table td::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent, rgba(102, 126, 234, 0.02));
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+
+        .points-table tr:hover td::before {
+            opacity: 1;
         }
 
         .board-controls-label {
@@ -983,33 +1046,41 @@
                 font-size: 18px;
             }
 
-            /* CRITICAL TABLE FIXES FOR MOBILE */
+            /* CRITICAL TABLE FIXES FOR MOBILE - SMOOTH APP-LIKE */
             .table-wrapper {
-                border-radius: 0;
+                border-radius: 15px;
                 margin: 0 -15px;
                 width: calc(100% + 30px);
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
                 position: relative;
+                scroll-snap-type: x proximity;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
             }
 
             .table-wrapper::before {
-                content: '👉 Swipe to see more →';
+                content: '👉 Swipe to see more';
                 position: sticky;
                 left: 0;
                 display: block;
                 background: linear-gradient(135deg, #667eea, #764ba2);
                 color: white;
-                padding: 10px 15px;
+                padding: 12px 15px;
                 font-size: 0.9em;
                 font-weight: 700;
                 text-align: center;
                 z-index: 5;
-                border-bottom: 2px solid rgba(255,255,255,0.3);
+                border-radius: 15px 15px 0 0;
+                animation: pulse 2s infinite;
+            }
+
+            @keyframes pulse {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.8; }
             }
 
             .points-table {
-                font-size: 13px;
+                font-size: 14px;
                 display: table;
                 width: max-content;
                 min-width: 100%;
@@ -1029,15 +1100,15 @@
             /* Make board headers more prominent on mobile */
             .points-table th.board-header {
                 font-size: 0.9em;
-                padding: 10px 8px;
+                padding: 12px 10px;
                 font-weight: 900;
                 border-bottom: 1px solid rgba(255,255,255,0.5);
             }
 
             /* Sub-headers (Q, T1, T2) smaller and grouped under board */
             .points-table th.sub-header {
-                font-size: 0.7em;
-                padding: 8px 6px;
+                font-size: 0.75em;
+                padding: 10px 8px;
                 font-weight: 700;
                 border-top: none;
             }
@@ -1049,129 +1120,173 @@
             }
 
             .points-table th {
-                padding: 10px 6px;
-                font-size: 0.75em;
+                padding: 12px 8px;
+                font-size: 0.8em;
                 letter-spacing: 0.5px;
                 white-space: nowrap;
-                min-width: 45px;
+                min-width: 50px;
             }
 
             .points-table td {
-                padding: 14px 8px;
+                padding: 16px 10px;
                 white-space: nowrap;
-                min-width: 45px;
-                min-height: 48px;
+                min-width: 50px;
+                min-height: 52px;
             }
 
-            /* First column sticky */
+            /* First column sticky with smooth shadow */
             .points-table th:first-child,
             .points-table td:first-child {
                 position: sticky;
                 left: 0;
                 z-index: 3;
                 background: white;
-                box-shadow: 3px 0 8px rgba(0, 0, 0, 0.15);
+                box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
             }
 
             .points-table th:first-child {
                 z-index: 12;
                 background: linear-gradient(135deg, #667eea, #764ba2);
-                box-shadow: 3px 0 8px rgba(0, 0, 0, 0.2);
+                box-shadow: 4px 0 10px rgba(0, 0, 0, 0.2);
+            }
+
+            .serial-col {
+                font-size: 1.1em;
+                min-width: 45px !important;
+            }
+
+            /* Larger touch targets with smooth feedback */
+            .editable-cell {
+                min-height: 52px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.15em;
+                min-width: 60px;
+                padding: 16px 12px;
+                cursor: pointer;
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .editable-cell:active {
+                transform: scale(0.95);
+                background: linear-gradient(135deg, #ffeaa7, #fdcb6e) !important;
+            }
+
+            .queen-box {
+                font-size: 2.2em;
+                display: inline-block;
+                transition: transform 0.2s;
+            }
+
+            /* Touch feedback for toggles */
+            td[onclick*="toggle"] {
+                min-height: 56px;
+                min-width: 56px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            td[onclick*="toggle"]:active {
+                transform: scale(0.9);
+                opacity: 0.8;
             }
 
             /* Date column mobile */
             .points-table th:nth-child(2),
             .points-table td:nth-child(2) {
-                min-width: 115px !important;
-                width: 115px !important;
+                min-width: 120px !important;
+                width: 120px !important;
             }
 
             .points-table td:nth-child(2) input[type="date"] {
-                font-size: 0.8em;
-                padding: 6px 4px;
+                font-size: 0.85em;
+                padding: 8px 6px;
+                border: 2px solid #667eea;
+                border-radius: 8px;
+                transition: all 0.2s;
             }
 
-            .serial-col {
-                font-size: 1em;
-                min-width: 40px !important;
-            }
-
-            /* Make cells bigger for touch */
-            .editable-cell {
-                min-height: 48px;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.1em;
-                min-width: 55px;
-                padding: 14px 10px;
-            }
-
-            .queen-box {
-                font-size: 2em;
-                display: inline-block;
-            }
-
-            /* Larger touch targets for toggles */
-            td[onclick*="toggle"] {
-                min-height: 52px;
-                min-width: 50px;
-                cursor: pointer;
+            .points-table td:nth-child(2) input[type="date"]:focus {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
             }
 
             /* Teams column mobile */
             td[style*="min-width: 150px"] {
-                min-width: 130px !important;
-                max-width: 160px !important;
+                min-width: 140px !important;
+                max-width: 170px !important;
             }
 
             td[style*="min-width: 150px"] select {
-                font-size: 0.85em;
-                padding: 8px 6px;
+                font-size: 0.9em;
+                padding: 10px 8px;
                 width: 100%;
-                max-width: 150px;
+                max-width: 160px;
+                border: 2px solid #667eea;
+                border-radius: 8px;
+                transition: all 0.2s;
             }
 
-            /* Scores column mobile - bigger and clearer */
+            td[style*="min-width: 150px"] select:focus {
+                transform: scale(1.02);
+            }
+
+            /* Scores column mobile - bigger and prominent */
             td[colspan="2"] > div {
-                gap: 6px !important;
+                gap: 8px !important;
             }
 
             td[colspan="2"] > div > div {
-                font-size: 1.5em !important;
-                padding: 12px 10px !important;
-                min-width: 80px;
+                font-size: 1.6em !important;
+                padding: 14px 12px !important;
+                min-width: 85px;
+                border-radius: 12px !important;
+                transition: all 0.2s;
             }
 
             /* Won By dropdown - bigger touch target */
             td > select {
-                font-size: 0.95em !important;
-                padding: 12px 10px !important;
-                min-height: 48px;
-                min-width: 100px;
+                font-size: 1em !important;
+                padding: 14px 12px !important;
+                min-height: 52px;
+                min-width: 110px;
+                border: 2px solid #667eea;
+                border-radius: 10px;
+                transition: all 0.2s;
             }
 
-            /* Actions column mobile */
+            td > select:focus {
+                transform: scale(1.05);
+            }
+
+            /* Actions column mobile - cleaner grid */
             .action-col {
-                min-width: 110px !important;
+                min-width: 120px !important;
             }
 
             .row-actions {
                 display: grid !important;
                 grid-template-columns: 1fr 1fr;
-                gap: 6px;
-                padding: 6px;
+                gap: 8px;
+                padding: 8px;
             }
 
             .row-btn {
                 width: 100% !important;
-                padding: 12px 8px !important;
-                font-size: 0.85em !important;
-                min-height: 44px;
+                padding: 14px 10px !important;
+                font-size: 0.9em !important;
+                min-height: 48px;
                 white-space: nowrap;
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                border-radius: 10px;
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .row-btn:active {
+                transform: scale(0.92);
             }
 
             /* Stats panel mobile */
@@ -1291,8 +1406,8 @@
                 <div class="nav-item active" onclick="showSection('dashboard')">
                     <span class="icon">🏠</span> Dashboard
                 </div>
-                <div class="nav-item" onclick="showSection('pointsTable')">
-                    <span class="icon">📊</span> Points Table
+                <div class="nav-item active" onclick="showSection('scoring')">
+                    <span class="icon">⚡</span> Scoring
                 </div>
                 <div class="nav-item" onclick="showSection('standings')">
                     <span class="icon">🏆</span> Standings
@@ -1313,7 +1428,7 @@
 
             <div class="content-area">
                 <!-- Dashboard -->
-                <div id="dashboard" class="content-section active">
+                <div id="dashboard" class="content-section">
                     <div class="section-header">
                         <h2>🏠 Dashboard</h2>
                         <p>Your Carrom Tournament Control Center</p>
@@ -1366,40 +1481,31 @@
                     </div>
                 </div>
 
-                <!-- Points Table -->
-                <div id="pointsTable" class="content-section">
+                <!-- Scoring -->
+                <div id="scoring" class="content-section active">
                     <div class="section-header">
-                        <h2>📊 Points Table</h2>
-                        <p>Match date • Single break per match • Queen per board (colored) • First to 25 wins • Click to toggle Break & Queen</p>
+                        <h2>⚡ Scoring</h2>
+                        <p>Quick match scoring • Date tracking • Real-time updates • Tap to edit</p>
                     </div>
 
-                    <div style="background: linear-gradient(135deg, #FFF8DC, #FFE4B5); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 3px solid #FFD700;">
+                    <div style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)); padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 2px solid rgba(102, 126, 234, 0.3);">
                         <div class="form-group" style="margin: 0;">
-                            <label>🏆 Tournament Name:</label>
-                            <input type="text" id="tournamentNameInput" placeholder="Enter tournament name (e.g., District Championship 2024)">
+                            <label style="font-size: 0.9em; color: #667eea; font-weight: 700; margin-bottom: 8px;">🏆 Tournament Name:</label>
+                            <input type="text" id="tournamentNameInput" placeholder="My Tournament" style="font-size: 1.1em; padding: 14px; border: 2px solid #667eea; border-radius: 10px;">
                         </div>
                     </div>
 
                     <!-- Main Controls -->
-                    <div class="table-controls">
-                        <button class="btn btn-primary" onclick="addMatchRow()">
-                            ➕ Add Match
+                    <div class="table-controls" style="gap: 12px;">
+                        <button class="btn btn-success" onclick="addMatchRow()" style="flex: 1; min-width: 140px;">
+                            ➕ New Match
                         </button>
-                        <button class="btn btn-warning" onclick="removeLastMatch()">
-                            ➖ Remove Last Match
+                        <button class="btn btn-primary" onclick="saveTournament()" style="flex: 1; min-width: 140px;">
+                            💾 Save
                         </button>
-                        <button class="btn btn-success" onclick="saveTournament()">
-                            💾 Save Tournament
+                        <button class="btn btn-danger" onclick="clearTable()" style="flex: 0.7; min-width: 100px;">
+                            🗑️ Clear
                         </button>
-                        <button class="btn btn-info" onclick="openSaveAsModal()">
-                            💾 Save As...
-                        </button>
-                        <button class="btn btn-danger" onclick="clearTable()">
-                            🗑️ Clear All
-                        </button>
-                        <div class="form-group" style="margin: 0; max-width: 250px;">
-                            <input type="date" id="tableDate" onchange="updateTableDate()">
-                        </div>
                     </div>
 
                     <!-- Quick Stats -->
@@ -1787,7 +1893,7 @@
             row[`board${row.numBoards}_team2_pts`] = 0;
             
             calculateRowTotal(row);
-            logEdit('Points Table', `Row ${row.serial} - Added Board ${row.numBoards}`, null, `Board ${row.numBoards}`);
+            logEdit('Scoring', `Row ${row.serial} - Added Board ${row.numBoards}`, null, `Board ${row.numBoards}`);
             saveCurrentState();
             renderPointsTable();
             updateStats();
@@ -1814,7 +1920,7 @@
             row.numBoards--;
             
             calculateRowTotal(row);
-            logEdit('Points Table', `Row ${row.serial} - Removed Board`, `Board ${row.numBoards + 1}`, 'Deleted');
+            logEdit('Scoring', `Row ${row.serial} - Removed Board`, `Board ${row.numBoards + 1}`, 'Deleted');
             saveCurrentState();
             renderPointsTable();
             updateStats();
@@ -1852,7 +1958,7 @@
             calculateRowTotal(row); // Calculate initial totals
 
             pointsTableData.push(row);
-            logEdit('Points Table', 'Added new match', null, `Row ${row.serial}`);
+            logEdit('Scoring', 'Added new match', null, `Row ${row.serial}`);
             saveCurrentState();
             renderPointsTable();
             updateStats();
@@ -1873,7 +1979,7 @@
             }
 
             const lastRow = pointsTableData[pointsTableData.length - 1];
-            logEdit('Points Table', `Removed last match`, `Row ${lastRow.serial}`, 'Deleted');
+            logEdit('Scoring', `Removed last match`, `Row ${lastRow.serial}`, 'Deleted');
             
             pointsTableData.pop();
             
@@ -1888,7 +1994,7 @@
             if (!confirm('Delete this match?')) return;
 
             const row = pointsTableData[index];
-            logEdit('Points Table', `Deleted match`, `Row ${row.serial} - ${row.player}`, 'Deleted');
+            logEdit('Scoring', `Deleted match`, `Row ${row.serial} - ${row.player}`, 'Deleted');
             
             pointsTableData.splice(index, 1);
             
@@ -1913,7 +2019,7 @@
             // Renumber serials
             pointsTableData.forEach((r, i) => r.serial = i + 1);
             
-            logEdit('Points Table', `Moved match up`, `Row ${index + 1}`, `Row ${index}`);
+            logEdit('Scoring', `Moved match up`, `Row ${index + 1}`, `Row ${index}`);
             saveCurrentState();
             renderPointsTable();
             showToast('Match moved up!', '✅');
@@ -1931,7 +2037,7 @@
             // Renumber serials
             pointsTableData.forEach((r, i) => r.serial = i + 1);
             
-            logEdit('Points Table', `Moved match down`, `Row ${index + 1}`, `Row ${index + 2}`);
+            logEdit('Scoring', `Moved match down`, `Row ${index + 1}`, `Row ${index + 2}`);
             saveCurrentState();
             renderPointsTable();
             showToast('Match moved down!', '✅');
@@ -1950,7 +2056,7 @@
 
             pointsTableData.push(duplicate);
             
-            logEdit('Points Table', `Duplicated match`, `Row ${original.serial}`, `Row ${duplicate.serial}`);
+            logEdit('Scoring', `Duplicated match`, `Row ${original.serial}`, `Row ${duplicate.serial}`);
             saveCurrentState();
             renderPointsTable();
             updateStats();
@@ -2120,7 +2226,7 @@
             const oldValue = row.break;
             row.break = !row.break;
             
-            logEdit('Points Table', `Row ${row.serial} - Break`, oldValue ? '✓' : '☐', row.break ? '✓' : '☐');
+            logEdit('Scoring', `Row ${row.serial} - Break`, oldValue ? '✓' : '☐', row.break ? '✓' : '☐');
             saveCurrentState();
         }
 
@@ -2139,7 +2245,7 @@
                 row[field] = parseFloat(newValue) || 0;
                 calculateRowTotal(row);
                 
-                logEdit('Points Table', `Row ${row.serial} - ${field}`, oldValue, newValue);
+                logEdit('Scoring', `Row ${row.serial} - ${field}`, oldValue, newValue);
                 saveCurrentState();
                 renderPointsTable();
                 updateStats();
@@ -2153,7 +2259,7 @@
             row[field] = !row[field];
             
             calculateRowTotal(row);
-            logEdit('Points Table', `Row ${row.serial} - ${field}`, oldValue ? '👑' : '☐', row[field] ? '👑' : '☐');
+            logEdit('Scoring', `Row ${row.serial} - ${field}`, oldValue ? '👑' : '☐', row[field] ? '👑' : '☐');
             saveCurrentState();
             renderPointsTable();
             updateStats();
@@ -2224,7 +2330,7 @@
         function clearTable() {
             if (!confirm('Clear entire table? This will not delete the saved tournament.')) return;
 
-            logEdit('Points Table', 'Cleared table', `${pointsTableData.length} rows`, 'Empty');
+            logEdit('Scoring', 'Cleared table', `${pointsTableData.length} rows`, 'Empty');
             pointsTableData = [];
             saveCurrentState();
             renderPointsTable();
@@ -2742,14 +2848,14 @@
         function updateTeam(rowIndex, field, value) {
             pointsTableData[rowIndex][field] = value;
             calculateRowTotal(pointsTableData[rowIndex]);
-            logEdit('Points Table', `Row ${pointsTableData[rowIndex].serial} - ${field}`, null, value);
+            logEdit('Scoring', `Row ${pointsTableData[rowIndex].serial} - ${field}`, null, value);
             saveCurrentState();
             renderPointsTable();
         }
 
         function updateWonBy(rowIndex, value) {
             pointsTableData[rowIndex].wonBy = value;
-            logEdit('Points Table', `Row ${pointsTableData[rowIndex].serial} - Won By`, null, value);
+            logEdit('Scoring', `Row ${pointsTableData[rowIndex].serial} - Won By`, null, value);
             saveCurrentState();
         }
 
@@ -2766,7 +2872,7 @@
                 row.break = '';
             }
             
-            logEdit('Points Table', `Row ${row.serial} - Break`, currentValue, row.break);
+            logEdit('Scoring', `Row ${row.serial} - Break`, currentValue, row.break);
             saveCurrentState();
             renderPointsTable();
         }
@@ -2785,7 +2891,7 @@
                 row[field] = '';
             }
             
-            logEdit('Points Table', `Row ${row.serial} - Board ${boardNum} queen`, currentValue, row[field]);
+            logEdit('Scoring', `Row ${row.serial} - Board ${boardNum} queen`, currentValue, row[field]);
             saveCurrentState();
             renderPointsTable();
         }
@@ -2801,7 +2907,7 @@
                 row[field] = parseFloat(newValue) || 0;
                 calculateRowTotal(row);
                 
-                logEdit('Points Table', `Row ${row.serial} - Board ${boardNum} ${team} points`, oldValue, newValue);
+                logEdit('Scoring', `Row ${row.serial} - Board ${boardNum} ${team} points`, oldValue, newValue);
                 saveCurrentState();
                 renderPointsTable();
                 updateStats();
@@ -2925,7 +3031,7 @@
             const row = pointsTableData[rowIndex];
             const oldDate = row.date;
             row.date = newDate;
-            logEdit('Points Table', `Row ${row.serial} - Date`, oldDate, newDate);
+            logEdit('Scoring', `Row ${row.serial} - Date`, oldDate, newDate);
             saveCurrentState();
             updateStandings();
             populateStandingsFilters();
