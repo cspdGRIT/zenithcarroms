@@ -1911,7 +1911,54 @@
             sessionStart: new Date().toISOString()
         };
 
-        // Initialize
+        // Navigation - Defined early so onclick handlers can use it
+        function showSection(section) {
+            console.log('Switching to section:', section);
+            
+            // Hide all sections
+            const allSections = document.querySelectorAll('.content-section');
+            allSections.forEach(s => {
+                s.classList.remove('active');
+                s.style.display = 'none';
+            });
+            
+            // Remove active from all nav items
+            const allNavItems = document.querySelectorAll('.nav-item');
+            allNavItems.forEach(i => i.classList.remove('active'));
+            
+            // Show selected section
+            const sectionElement = document.getElementById(section);
+            if (sectionElement) {
+                sectionElement.classList.add('active');
+                sectionElement.style.display = 'block';
+            } else {
+                console.error('Section not found:', section);
+                return;
+            }
+            
+            // Highlight active nav item - find the one that was clicked
+            allNavItems.forEach(item => {
+                const onclickAttr = item.getAttribute('onclick');
+                if (onclickAttr && onclickAttr.includes(`'${section}'`)) {
+                    item.classList.add('active');
+                }
+            });
+
+            // Load section-specific data
+            if (section === 'savedTournaments') {
+                if (typeof renderTournamentsList === 'function') renderTournamentsList();
+            } else if (section === 'dashboard') {
+                if (typeof updateDashboardStats === 'function') updateDashboardStats();
+            } else if (section === 'teams') {
+                if (typeof renderTeamsTable === 'function') renderTeamsTable();
+            } else if (section === 'standings') {
+                if (typeof updateStandings === 'function') updateStandings();
+            }
+        }
+        
+        // Make it explicitly global
+        window.showSection = showSection;
+
         // Initialize
         window.onload = function() {
             console.log('Page loaded, initializing...');
@@ -1926,6 +1973,14 @@
             updateStats();
             updateDashboardStats();
             document.getElementById('tableDate').value = new Date().toISOString().split('T')[0];
+            
+            // Initialize standings
+            if (typeof populateStandingsFilters === 'function') {
+                populateStandingsFilters();
+            }
+            if (typeof updateStandings === 'function') {
+                updateStandings();
+            }
             
             // Show scoring section by default after a short delay to ensure DOM is ready
             setTimeout(() => {
@@ -1963,54 +2018,6 @@
             const tournamentName = document.getElementById('tournamentNameInput').value;
             document.getElementById('currentTournamentName').textContent = tournamentName || 'None';
         }
-
-        // Navigation
-        function showSection(section) {
-            console.log('Switching to section:', section);
-            
-            // Hide all sections
-            const allSections = document.querySelectorAll('.content-section');
-            allSections.forEach(s => {
-                s.classList.remove('active');
-                s.style.display = 'none';
-            });
-            
-            // Remove active from all nav items
-            const allNavItems = document.querySelectorAll('.nav-item');
-            allNavItems.forEach(i => i.classList.remove('active'));
-            
-            // Show selected section
-            const sectionElement = document.getElementById(section);
-            if (sectionElement) {
-                sectionElement.classList.add('active');
-                sectionElement.style.display = 'block';
-            } else {
-                console.error('Section not found:', section);
-                return;
-            }
-            
-            // Highlight active nav item - find the one that was clicked
-            allNavItems.forEach(item => {
-                const onclickAttr = item.getAttribute('onclick');
-                if (onclickAttr && onclickAttr.includes(`'${section}'`)) {
-                    item.classList.add('active');
-                }
-            });
-
-            // Load section-specific data
-            if (section === 'savedTournaments') {
-                renderTournamentsList();
-            } else if (section === 'dashboard') {
-                updateDashboardStats();
-            } else if (section === 'teams') {
-                renderTeamsTable();
-            } else if (section === 'standings') {
-                updateStandings();
-            }
-        }
-        
-        // Make it explicitly global
-        window.showSection = showSection;
 
         // Save Mobile
         function saveMobile() {
@@ -3898,9 +3905,7 @@
                 voiceBtn.style.background = 'linear-gradient(135deg, #f093fb, #f5576c)';
                 voiceBtn.innerHTML = '🎤';
             }
-        </script>
 
-        <script>
         // Auto-save every 30 seconds
         setInterval(function() {
             if (pointsTableData.length > 0) {
@@ -3908,54 +3913,42 @@
             }
         }, 30000);
 
-        // Register Service Worker for PWA
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(function(registration) {
-                        console.log('ServiceWorker registration successful');
-                    })
-                    .catch(function(err) {
-                        console.log('ServiceWorker registration failed: ', err);
-                    });
-                
-                // Initialize standings after load
-                setTimeout(() => {
-                    populateStandingsFilters();
-                    updateStandings();
-                }, 500);
-            });
-        } else {
-            // Initialize standings even without service worker
-            setTimeout(() => {
-                populateStandingsFilters();
-                updateStandings();
-            }, 500);
-        }
+        // Register Service Worker for PWA (disabled - no service-worker.js file)
+        // if ('serviceWorker' in navigator) {
+        //     window.addEventListener('load', function() {
+        //         navigator.serviceWorker.register('/service-worker.js')
+        //             .then(function(registration) {
+        //                 console.log('ServiceWorker registration successful');
+        //             })
+        //             .catch(function(err) {
+        //                 console.log('ServiceWorker registration failed: ', err);
+        //             });
+        //     });
+        // }
 
-        // Prompt to install PWA
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            
-            // Show install button/prompt after 10 seconds
-            setTimeout(() => {
-                if (deferredPrompt && !localStorage.getItem('pwaInstalled')) {
-                    if (confirm('📱 Install Carrom Manager as an app on your device for easier access?')) {
-                        deferredPrompt.prompt();
-                        deferredPrompt.userChoice.then((choiceResult) => {
-                            if (choiceResult.outcome === 'accepted') {
-                                localStorage.setItem('pwaInstalled', 'true');
-                            }
-                            deferredPrompt = null;
-                        });
-                    } else {
-                        localStorage.setItem('pwaInstalled', 'dismissed');
-                    }
-                }
-            }, 10000);
-        });
+        // Prompt to install PWA (disabled - requires service worker)
+        // let deferredPrompt;
+        // window.addEventListener('beforeinstallprompt', (e) => {
+        //     e.preventDefault();
+        //     deferredPrompt = e;
+        //     
+        //     // Show install button/prompt after 10 seconds
+        //     setTimeout(() => {
+        //         if (deferredPrompt && !localStorage.getItem('pwaInstalled')) {
+        //             if (confirm('📱 Install Carrom Manager as an app on your device for easier access?')) {
+        //                 deferredPrompt.prompt();
+        //                 deferredPrompt.userChoice.then((choiceResult) => {
+        //                     if (choiceResult.outcome === 'accepted') {
+        //                         localStorage.setItem('pwaInstalled', 'true');
+        //                     }
+        //                     deferredPrompt = null;
+        //                 });
+        //             } else {
+        //                 localStorage.setItem('pwaInstalled', 'dismissed');
+        //             }
+        //         }
+        //     }, 10000);
+        // });
     </script>
 </body>
 </html>
