@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-title" content="Carrom Manager">
     <meta name="mobile-web-app-capable" content="yes">
     <link rel="manifest" href="manifest.json">
-    <title>🎯 Carroms@Zenith 2025 🎯</title>
+    <title>🎯 Ultimate Carrom Manager - Ultra Dynamic Edition</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Playfair+Display:wght@700;900&display=swap');
 
@@ -1433,14 +1433,14 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎯 Carroms@Zenith 2025</h1>
-            <p>Professional Tournament Management 🎯</p>
+            <h1>🎯 ULTIMATE CARROM MANAGER</h1>
+            <p>Professional Tournament Management - Ultra Dynamic Edition</p>
         </div>
 
         <div class="main-layout">
             <div class="sidebar">
                 <h3>Navigation</h3>
-                <div class="nav-item active" onclick="showSection('dashboard')">
+                <div class="nav-item" onclick="showSection('dashboard')">
                     <span class="icon">🏠</span> Dashboard
                 </div>
                 <div class="nav-item active" onclick="showSection('scoring')">
@@ -1912,7 +1912,9 @@
         };
 
         // Initialize
+        // Initialize
         window.onload = function() {
+            console.log('Page loaded, initializing...');
             loadAllData();
             getUserIP();
             updateSessionDisplay();
@@ -1924,6 +1926,12 @@
             updateStats();
             updateDashboardStats();
             document.getElementById('tableDate').value = new Date().toISOString().split('T')[0];
+            
+            // Show scoring section by default after a short delay to ensure DOM is ready
+            setTimeout(() => {
+                console.log('Showing scoring section...');
+                showSection('scoring');
+            }, 100);
         };
 
         // Get User IP
@@ -1958,22 +1966,33 @@
 
         // Navigation
         function showSection(section) {
+            console.log('Switching to section:', section);
+            
             // Hide all sections
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            const allSections = document.querySelectorAll('.content-section');
+            allSections.forEach(s => {
+                s.classList.remove('active');
+                s.style.display = 'none';
+            });
             
             // Remove active from all nav items
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            const allNavItems = document.querySelectorAll('.nav-item');
+            allNavItems.forEach(i => i.classList.remove('active'));
             
             // Show selected section
             const sectionElement = document.getElementById(section);
             if (sectionElement) {
                 sectionElement.classList.add('active');
+                sectionElement.style.display = 'block';
+            } else {
+                console.error('Section not found:', section);
+                return;
             }
             
-            // Highlight active nav item
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                if (item.getAttribute('onclick')?.includes(`'${section}'`)) {
+            // Highlight active nav item - find the one that was clicked
+            allNavItems.forEach(item => {
+                const onclickAttr = item.getAttribute('onclick');
+                if (onclickAttr && onclickAttr.includes(`'${section}'`)) {
                     item.classList.add('active');
                 }
             });
@@ -1989,6 +2008,9 @@
                 updateStandings();
             }
         }
+        
+        // Make it explicitly global
+        window.showSection = showSection;
 
         // Save Mobile
         function saveMobile() {
